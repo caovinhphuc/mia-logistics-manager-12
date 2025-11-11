@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" /> <!-- Favicon -->
+    <meta name="description" content="MIA Logistics Manager - Hệ thống quản lý vận chuyển chuyên nghiệp" /> <!-- Description -->
+    <meta name="keywords" content="logistics, transport, warehouse, quản lý vận chuyển, kho bãi" /> <!-- Keywords -->
+    <meta name="author" content="MIA Logistics Team" /> <!-- Author -->
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="MIA Logistics Manager" /> <!-- Open Graph title -->
+    <meta property="og:description" content="Hệ thống quản lý vận chuyển chuyên nghiệp" /> <!-- Open Graph description -->
+    <meta property="og:type" content="website" /> <!-- Open Graph type -->
+    <meta property="og:url" content="%PUBLIC_URL%" /> <!-- Open Graph url -->
+    <meta property="og:image" content="%PUBLIC_URL%/logo192.png" /> <!-- Open Graph image -->
+
+    <!-- Apple Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" /> <!-- Apple mobile web app capable -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="MIA Logistics Manager" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+
+    <!-- PWA Meta Tags -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="MIA Logistics Manager" />
+    <meta name="msapplication-TileColor" content="#1976d2" />
+    <meta name="msapplication-config" content="%PUBLIC_URL%/browserconfig.xml" />
+    <meta name="theme-color" content="#1976d2" />
+
+    <!-- Device-specific optimizations -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="MobileOptimized" content="width" />
+
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com https://accounts.google.com https://www.google.com;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com;
+        font-src 'self' https://fonts.gstatic.com;
+        img-src 'self' data: https: blob:;
+        connect-src 'self' https://sheets.googleapis.com https://drive.googleapis.com https://maps.googleapis.com https://accounts.google.com;
+        frame-src 'self' https://accounts.google.com https://www.google.com;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+    " />
+    <!-- Manifest -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://maps.googleapis.com" />
+    <link rel="preconnect" href="https://sheets.googleapis.com" />
+    <link rel="preconnect" href="https://drive.googleapis.com" />
+
+    <!-- Google Fonts - Optimized Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Warning Suppression Script -->
+    <script src="%PUBLIC_URL%/suppressWarnings.js"></script>
+
+    <!-- Google API Scripts with Error Handling -->
+    <script>
+        // Google API Error Handler
+        window.gapiErrorHandler = function(error) {
+            console.warn('⚠️ Google API initialization failed - using fallback mode');
+            console.log('💡 Using fallback mode');
+
+            // Set fallback mode flag
+            window.googleApiFallback = true;
+
+            // Dispatch custom event for app to handle
+            window.dispatchEvent(new CustomEvent('googleApiFallback', {
+                detail: { error: error }
+            }));
+        };
+
+        // Load Google API with error handling
+        function loadGoogleAPI() {
+            // Always try to load Google API
+            const script = document.createElement('script');
+            script.src = 'https://apis.google.com/js/api.js';
+            script.async = true;
+            script.defer = true;
+            script.crossOrigin = 'anonymous';
+
+            script.onload = function() {
+                // Wait a bit for gapi to be available
+                setTimeout(() => {
+                    if (typeof gapi !== 'undefined') {
+                        gapi.load('client', {
+                            callback: function() {
+                                console.log('✅ Google API loaded successfully');
+                                window.googleApiReady = true;
+                            },
+                            onerror: window.gapiErrorHandler
+                        });
+                    } else {
+                        console.warn('⚠️ Google API script loaded but gapi not available, using fallback mode');
+                        window.googleApiFallback = true;
+                    }
+                }, 100);
+            };
+
+            script.onerror = window.gapiErrorHandler;
+            document.head.appendChild(script);
+        }
+
+        // Fix iframe sandbox issues
+        function fixIframeSandbox() {
+            // Monitor for iframes and fix sandbox attributes
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1 && node.tagName === 'IFRAME') {
+                            // Fix sandbox attributes for Google iframes
+                            if (node.src && node.src.includes('google.com')) {
+                                node.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups');
+                                node.setAttribute('allow', 'camera; microphone; geolocation');
+                            }
+                        }
+                    });
+                });
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGoogleAPI();
+            fixIframeSandbox();
+        });
+    </script>
+
+    <title>MIA Logistics Manager</title>
+
+    <style>
+        /* Enhanced Loading screen styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.025em;
+        }
+
+        .loading-subtitle {
+            font-size: 0.875rem;
+            font-weight: 400;
+            opacity: 0.85;
+            margin-bottom: 2rem;
+            line-height: 1.4;
+            max-width: 300px;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Network status indicators */
+        .network-status {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            padding: 0.5rem 1rem;
+            border-radius: 1.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            letter-spacing: 0.025em;
+            text-transform: uppercase;
+        }
+
+        .network-online {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+            color: #4caf50;
+        }
+
+        .network-offline {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+
+        .network-checking {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            color: #ffc107;
+        }
+
+        .backend-checking {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196f3;
+            color: #2196f3;
+        }
+
+        .auth-checking {
+            background: rgba(156, 39, 176, 0.2);
+            border: 1px solid #9c27b0;
+            color: #9c27b0;
+        }
+
+        /* Loading states */
+        .loading-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .loading-state.hidden {
+            display: none;
+        }
+
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            background: white;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            animation: progress 2s ease-in-out;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Hide loading screen when app loads */
+        .app-loaded .loading-screen {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Offline mode styles */
+        .offline-mode {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+        }
+
+        .offline-content {
+            text-align: center;
+            max-width: 400px;
+            padding: 20px;
+        }
+
+        .offline-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .retry-button {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 1.5rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 1.25rem;
+            letter-spacing: 0.025em;
+            min-height: 2.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+
+        .retry-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #f5f5f5;
+            font-size: 16px;
+            line-height: 1.5;
+            font-weight: 400;
+            color: #333;
+        }
+
+        /* Typography Scale */
+        h1, .h1 { font-size: 2.5rem; font-weight: 700; line-height: 1.2; }
+        h2, .h2 { font-size: 2rem; font-weight: 600; line-height: 1.3; }
+        h3, .h3 { font-size: 1.75rem; font-weight: 600; line-height: 1.3; }
+        h4, .h4 { font-size: 1.5rem; font-weight: 500; line-height: 1.4; }
+        h5, .h5 { font-size: 1.25rem; font-weight: 500; line-height: 1.4; }
+        h6, .h6 { font-size: 1rem; font-weight: 500; line-height: 1.5; }
+
+        .text-large { font-size: 1.125rem; font-weight: 400; }
+        .text-normal { font-size: 1rem; font-weight: 400; }
+        .text-small { font-size: 0.875rem; font-weight: 400; }
+        .text-xs { font-size: 0.75rem; font-weight: 400; }
+
+        .font-light { font-weight: 300; }
+        .font-normal { font-weight: 400; }
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+        .font-black { font-weight: 900; }
+
+        code {
+            font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+        }
+
+        /* Enhanced Responsive Design */
+        .mobile-only {
+            display: none;
+        }
+
+        .tablet-only {
+            display: none;
+        }
+
+        .desktop-only {
+            display: block;
+        }
+
+        /* Mobile First Approach */
+        @media (max-width: 480px) {
+            /* Small Mobile Devices */
+            .loading-logo {
+                width: 3.75rem;
+                height: 3.75rem;
+            }
+
+            .loading-text {
+                font-size: 1.25rem;
+                font-weight: 600;
+            }
+
+            .loading-subtitle {
+                font-size: 0.75rem;
+                padding: 0 1.25rem;
+                max-width: 280px;
+            }
+
+            .network-status {
+                top: 0.625rem;
+                right: 0.625rem;
+                padding: 0.375rem 0.75rem;
+                font-size: 0.625rem;
+            }
+
+            .loading-progress {
+                width: 9.375rem;
+            }
+
+            .retry-button {
+                padding: 0.625rem 1.25rem;
+                font-size: 0.75rem;
+                min-height: 2.5rem;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            /* Large Mobile / Small Tablet */
+            .loading-logo {
+                width: 70px;
+                height: 70px;
+            }
+
+            .loading-text {
+                font-size: 22px;
+            }
+
+            .loading-subtitle {
+                font-size: 13px;
+            }
+
+            .loading-progress {
+                width: 180px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            /* Tablet */
+            .tablet-only {
+                display: block;
+            }
+
+            .loading-logo {
+                width: 80px;
+                height: 80px;
+            }
+
+            .loading-text {
+                font-size: 24px;
+            }
+
+            .loading-subtitle {
+                font-size: 14px;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            /* Desktop */
+            .desktop-only {
+                display: block;
+            }
+
+            .mobile-only,
+            .tablet-only {
+                display: none;
+            }
+        }
+
+        /* Touch Device Optimizations */
+        @media (hover: none) and (pointer: coarse) {
+            .retry-button {
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .loading-spinner {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* High DPI Displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .loading-logo svg {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Landscape Orientation */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .loading-screen {
+                flex-direction: row;
+                padding: 20px;
+            }
+
+            .loading-logo {
+                width: 50px;
+                height: 50px;
+                margin-right: 20px;
+                margin-bottom: 0;
+            }
+
+            .loading-text {
+                font-size: 18px;
+                margin-bottom: 5px;
+            }
+
+            .loading-subtitle {
+                font-size: 12px;
+                margin-bottom: 15px;
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            .loading-screen {
+                background: linear-gradient(135deg, #0d47a1 0%, #1976d2 100%);
+            }
+
+            .offline-mode {
+                background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);
+            }
+        }
+
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            .loading-logo,
+            .loading-spinner,
+            .offline-icon {
+                animation: none;
+            }
+
+            .loading-progress-bar {
+                animation: none;
+                transition: width 0.3s ease;
+            }
+        }
+
+        /* High Contrast Mode */
+        @media (prefers-contrast: high) {
+            .loading-screen {
+                background: #000;
+                color: #fff;
+            }
+
+            .network-status {
+                border: 2px solid currentColor;
+            }
+
+            .retry-button {
+                border: 2px solid currentColor;
+                background: transparent;
+            }
+        }
+    </style>
+</head>
+<body>
+    <noscript>
+        <div style="text-align: center; padding: 50px; font-family: 'Roboto', sans-serif;">
+            <h2>Vui lòng bật JavaScript</h2>
+            <p>Ứng dụng MIA Logistics Manager cần JavaScript để hoạt động.</p>
+            <p>Please enable JavaScript to run MIA Logistics Manager.</p>
+        </div>
+    </noscript>
+
+    <!-- Enhanced Loading Screen -->
+    <div class="loading-screen" id="loading-screen">
+        <!-- Network Status Indicator -->
+        <div class="network-status network-checking" id="network-status">
+            <span id="network-text">Đang kiểm tra mạng...</span>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" id="loading-state">
+        <div class="loading-logo">
+            <svg viewBox="0 0 100 100" fill="currentColor">
+                <path d="M20 80 L50 20 L80 80 M30 65 L70 65" stroke="currentColor" stroke-width="4" fill="none"/>
+                <circle cx="25" cy="75" r="3" fill="currentColor"/>
+                <circle cx="50" cy="75" r="3" fill="currentColor"/>
+                <circle cx="75" cy="75" r="3" fill="currentColor"/>
+            </svg>
+        </div>
+        <div class="loading-text">MIA Logistics</div>
+        <div class="loading-subtitle">Hệ thống quản lý vận chuyển chuyên nghiệp</div>
+            <div class="loading-progress">
+                <div class="loading-progress-bar" id="progress-bar"></div>
+            </div>
+        <div class="loading-spinner"></div>
+        </div>
+
+        <!-- Offline State -->
+        <div class="loading-state hidden" id="offline-state">
+            <div class="offline-content">
+                <div class="offline-icon">📡</div>
+                <div class="loading-text">Không có kết nối mạng</div>
+                <div class="loading-subtitle">Đang chuyển sang chế độ offline...</div>
+                <button class="retry-button" onclick="checkNetworkAndRedirect()">
+                    Thử lại kết nối
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Root -->
+    <div id="root"></div> <!-- App root -->
+
+    <!-- Enhanced Service Worker Registration & Network Detection -->
+    <script>
+        // Global variables
+        let networkStatus = 'checking';
+        let loadingProgress = 0;
+        let isAppLoaded = false;
+
+        // DOM elements
+        const loadingScreen = document.getElementById('loading-screen');
+        const networkStatusEl = document.getElementById('network-status');
+        const networkTextEl = document.getElementById('network-text');
+        const loadingStateEl = document.getElementById('loading-state');
+        const offlineStateEl = document.getElementById('offline-state');
+        const progressBarEl = document.getElementById('progress-bar');
+
+        // Network detection function
+        async function checkNetworkStatus() {
+            try {
+                // Test network connectivity
+                const response = await fetch('/api/health', {
+                    method: 'HEAD',
+                    mode: 'no-cors',
+                    cache: 'no-cache'
+                });
+                return true;
+            } catch (error) {
+                // Try alternative method
+                try {
+                    const response = await fetch(window.location.origin + '/favicon.ico', {
+                        method: 'HEAD',
+                        mode: 'no-cors',
+                        cache: 'no-cache'
+                    });
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+        }
+
+        // Backend connection check
+        async function checkBackendConnection() {
+            try {
+                const response = await fetch('/api/health', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    cache: 'no-cache'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Backend connected:', data);
+                    return { connected: true, data: data };
+                } else {
+                    console.warn('⚠️ Backend responded with error:', response.status);
+                    return { connected: false, error: response.status };
+                }
+            } catch (error) {
+                console.log('ℹ️ Frontend-only mode: Không cần Backend - sử dụng Google Sheets trực tiếp');
+                return { connected: false, error: error.message };
+            }
+        }
+
+        // Authentication check
+        async function checkAuthentication() {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    return { authenticated: false, reason: 'No token' };
+                }
+
+                const response = await fetch('/api/auth/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    cache: 'no-cache'
+                });
+
+                if (response.ok) {
+                    const userData = await response.json();
+                    console.log('✅ User authenticated:', userData);
+                    return { authenticated: true, user: userData };
+                } else {
+                    // Token invalid, remove it
+                    localStorage.removeItem('authToken');
+                    return { authenticated: false, reason: 'Invalid token' };
+                }
+            } catch (error) {
+                console.warn('⚠️ Authentication check failed:', error.message);
+                return { authenticated: false, reason: error.message };
+            }
+        }
+
+        // Determine redirect destination
+        function determineRedirect(authResult, backendResult) {
+            // Always show login form for demo purposes
+            // if (!backendResult.connected) {
+            //     return '/offline';
+            // }
+
+            if (authResult.authenticated) {
+                return '/dashboard';
+            } else {
+                // Don't redirect, show login form directly
+                return null;
+            }
+        }
+
+        // Update network status UI
+        function updateNetworkStatus(status, text) {
+            networkStatus = status;
+            networkStatusEl.className = `network-status network-${status}`;
+            networkTextEl.textContent = text;
+        }
+
+        // Show offline mode
+        function showOfflineMode() {
+            loadingScreen.classList.add('offline-mode');
+            loadingStateEl.classList.add('hidden');
+            offlineStateEl.classList.remove('hidden');
+            updateNetworkStatus('offline', 'Offline Mode');
+        }
+
+        // Show loading mode
+        function showLoadingMode() {
+            loadingScreen.classList.remove('offline-mode');
+            loadingStateEl.classList.remove('hidden');
+            offlineStateEl.classList.add('hidden');
+        }
+
+        // Show login form
+        function showLoginForm() {
+            // Create login form HTML
+            const loginFormHTML = `
+                <div id="login-form" style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 10000;
+                    color: white;
+                    font-family: 'Roboto', sans-serif;
+                ">
+                    <div style="
+                        background: rgba(255, 255, 255, 0.1);
+                        backdrop-filter: blur(10px);
+                        border-radius: 20px;
+                        padding: 40px;
+                        max-width: 400px;
+                        width: 90%;
+                        text-align: center;
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+                    ">
+                        <div style="
+                            width: 80px;
+                            height: 80px;
+                            margin: 0 auto 20px;
+                            background: rgba(255, 255, 255, 0.2);
+                            border-radius: 50%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 32px;
+                        ">🚚</div>
+
+                        <h1 style="
+                            font-size: 28px;
+                            font-weight: 600;
+                            margin-bottom: 10px;
+                            letter-spacing: -0.025em;
+                        ">MIA Logistics</h1>
+
+                        <p style="
+                            font-size: 16px;
+                            opacity: 0.9;
+                            margin-bottom: 30px;
+                            line-height: 1.5;
+                        ">Đăng nhập để truy cập hệ thống quản lý vận chuyển</p>
+
+                        <form id="login-form-element" style="display: flex; flex-direction: column; gap: 20px;">
+                            <div>
+                                <input type="email" id="email" placeholder="Email" required style="
+                                    width: 100%;
+                                    padding: 15px 20px;
+                                    border: 1px solid rgba(255, 255, 255, 0.3);
+                                    border-radius: 10px;
+                                    background: rgba(255, 255, 255, 0.1);
+                                    color: white;
+                                    font-size: 16px;
+                                    outline: none;
+                                    transition: all 0.3s ease;
+                                " onfocus="this.style.borderColor='rgba(255, 255, 255, 0.6)'" onblur="this.style.borderColor='rgba(255, 255, 255, 0.3)'">
+                            </div>
+
+                            <div>
+                                <input type="password" id="password" placeholder="Mật khẩu" required style="
+                                    width: 100%;
+                                    padding: 15px 20px;
+                                    border: 1px solid rgba(255, 255, 255, 0.3);
+                                    border-radius: 10px;
+                                    background: rgba(255, 255, 255, 0.1);
+                                    color: white;
+                                    font-size: 16px;
+                                    outline: none;
+                                    transition: all 0.3s ease;
+                                " onfocus="this.style.borderColor='rgba(255, 255, 255, 0.6)'" onblur="this.style.borderColor='rgba(255, 255, 255, 0.3)'">
+                            </div>
+
+                            <button type="submit" id="login-button" style="
+                                width: 100%;
+                                padding: 15px 20px;
+                                background: rgba(255, 255, 255, 0.2);
+                                border: 1px solid rgba(255, 255, 255, 0.3);
+                                border-radius: 10px;
+                                color: white;
+                                font-size: 16px;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                                margin-top: 10px;
+                            " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
+                                🔐 Đăng nhập
+                            </button>
+                        </form>
+
+                        <div id="login-status" style="
+                            margin-top: 20px;
+                            padding: 10px;
+                            border-radius: 8px;
+                            font-size: 14px;
+                            display: none;
+                        "></div>
+
+                        <div style="
+                            margin-top: 30px;
+                            font-size: 14px;
+                            opacity: 0.8;
+                        ">
+                            <p>Hoặc</p>
+                            <button id="google-login" style="
+                                width: 100%;
+                                padding: 12px 20px;
+                                background: rgba(255, 255, 255, 0.1);
+                                border: 1px solid rgba(255, 255, 255, 0.3);
+                                border-radius: 10px;
+                                color: white;
+                                font-size: 14px;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                                margin-top: 10px;
+                            " onmouseover="this.style.background='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'">
+                                🔗 Đăng nhập với Google
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Add login form to body
+            document.body.insertAdjacentHTML('beforeend', loginFormHTML);
+
+            // Add event listeners
+            document.getElementById('login-form-element').addEventListener('submit', handleLogin);
+            document.getElementById('google-login').addEventListener('click', handleGoogleLogin);
+        }
+
+        // Update loading progress
+        function updateProgress(percent) {
+            loadingProgress = percent;
+            if (progressBarEl) {
+                progressBarEl.style.width = `${percent}%`;
+            }
+        }
+
+        // Main network check and redirect logic
+        async function checkNetworkAndRedirect() {
+            updateProgress(20);
+            updateNetworkStatus('checking', 'Đang kiểm tra mạng...');
+
+            // Wait a bit for visual feedback
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            updateProgress(40);
+
+            const isOnline = await checkNetworkStatus();
+
+            if (isOnline) {
+                updateProgress(60);
+                updateNetworkStatus('online', 'Đã kết nối');
+
+                // Check backend connection
+                updateProgress(70);
+                updateNetworkStatus('checking', 'Đang kiểm tra backend...');
+
+                const backendResult = await checkBackendConnection();
+
+                if (backendResult.connected) {
+                    updateProgress(80);
+                    updateNetworkStatus('checking', 'Đang kiểm tra đăng nhập...');
+
+                    // Check authentication
+                    const authResult = await checkAuthentication();
+
+                    updateProgress(90);
+
+                    // Determine redirect destination
+                    const redirectPath = determineRedirect(authResult, backendResult);
+
+                    updateProgress(100);
+                    updateNetworkStatus('online', 'Sẵn sàng');
+
+                    // Wait a bit more for smooth transition
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+
+                    // Hide loading screen and show login form
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                            document.body.classList.add('app-loaded');
+                            isAppLoaded = true;
+
+                            // Don't show HTML login form, let React app handle it
+                            if (redirectPath !== window.location.pathname) {
+                                window.location.href = redirectPath;
+                            }
+                        }, 500);
+                    }, 1000);
+
+                } else {
+                    // Backend not connected, show login form anyway
+                    updateProgress(100);
+                    updateNetworkStatus('online', 'Sẵn sàng (Backend offline)');
+
+                    // Wait a bit more for smooth transition
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+
+                    // Hide loading screen and show login form
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                            document.body.classList.add('app-loaded');
+                            isAppLoaded = true;
+
+                            // Let React app handle login when backend is not connected
+                            // showLoginForm();
+                        }, 500);
+                    }, 1000);
+                }
+
+            } else {
+                // No network, show login form anyway (for demo purposes)
+                updateProgress(100);
+                updateNetworkStatus('offline', 'Không có mạng - Chế độ demo');
+
+                // Wait a bit more for smooth transition
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Hide loading screen and show login form
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        document.body.classList.add('app-loaded');
+                        isAppLoaded = true;
+
+                        // Let React app handle login even when offline
+                        // showLoginForm();
+                    }, 500);
+                }, 1000);
+            }
+        }
+
+        // Authentication utilities
+        function setAuthToken(token) {
+            localStorage.setItem('authToken', token);
+        }
+
+        function getAuthToken() {
+            return localStorage.getItem('authToken');
+        }
+
+        function clearAuthToken() {
+            localStorage.removeItem('authToken');
+        }
+
+        function isAuthenticated() {
+            return !!getAuthToken();
+        }
+
+        // Backend utilities
+        function getBackendUrl() {
+            return window.location.origin;
+        }
+
+        function getApiUrl(endpoint) {
+            return `${getBackendUrl()}/api${endpoint}`;
+        }
+
+        // Handle login form submission
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const statusEl = document.getElementById('login-status');
+            const loginButton = document.getElementById('login-button');
+
+            // Show loading state
+            loginButton.textContent = '🔄 Đang đăng nhập...';
+            loginButton.disabled = true;
+            statusEl.style.display = 'none';
+
+            try {
+                // Authenticate with Google Sheets
+                const authResult = await authenticateWithGoogleSheets(email, password);
+
+                if (authResult.success) {
+                    // Store token
+                    setAuthToken(authResult.token);
+
+                    // Show success message
+                    statusEl.style.display = 'block';
+                    statusEl.style.background = 'rgba(76, 175, 80, 0.2)';
+                    statusEl.style.border = '1px solid #4caf50';
+                    statusEl.style.color = '#4caf50';
+                    statusEl.textContent = '✅ Đăng nhập thành công! Đang chuyển hướng...';
+
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1500);
+                } else {
+                    throw new Error(authResult.message || 'Đăng nhập thất bại');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+
+                // Show error message
+                statusEl.style.display = 'block';
+                statusEl.style.background = 'rgba(244, 67, 54, 0.2)';
+                statusEl.style.border = '1px solid #f44336';
+                statusEl.style.color = '#f44336';
+                statusEl.textContent = `❌ ${error.message}`;
+            } finally {
+                // Reset button
+                loginButton.textContent = '🔐 Đăng nhập';
+                loginButton.disabled = false;
+            }
+        }
+
+        // Handle Google login
+        async function handleGoogleLogin() {
+            const statusEl = document.getElementById('login-status');
+            const googleButton = document.getElementById('google-login');
+
+            // Show loading state
+            googleButton.textContent = '🔄 Đang kết nối Google...';
+            googleButton.disabled = true;
+            statusEl.style.display = 'none';
+
+            try {
+                // Check Google API availability
+                if (typeof gapi === 'undefined' || window.googleApiFallback) {
+                    // Show fallback message
+                    statusEl.style.display = 'block';
+                    statusEl.style.background = 'rgba(255, 193, 7, 0.2)';
+                    statusEl.style.border = '1px solid #ffc107';
+                    statusEl.style.color = '#ffc107';
+                    statusEl.textContent = '⚠️ Google API không khả dụng - sử dụng chế độ demo';
+
+                    // Simulate successful login for demo
+                    setTimeout(() => {
+                        const demoToken = btoa(JSON.stringify({
+                            email: 'demo@mia-logistics.com',
+                            name: 'Demo User',
+                            role: 'admin',
+                            provider: 'demo',
+                            timestamp: Date.now()
+                        }));
+
+                        setAuthToken(demoToken);
+
+                        statusEl.style.background = 'rgba(76, 175, 80, 0.2)';
+                        statusEl.style.border = '1px solid #4caf50';
+                        statusEl.style.color = '#4caf50';
+                        statusEl.textContent = '✅ Đăng nhập demo thành công! Đang chuyển hướng...';
+
+                        setTimeout(() => {
+                            window.location.href = '/dashboard';
+                        }, 1500);
+                    }, 2000);
+
+                    return;
+                }
+
+                // Authenticate with Google
+                const authResult = await authenticateWithGoogle();
+
+                if (authResult.success) {
+                    // Store token
+                    setAuthToken(authResult.token);
+
+                    // Show success message
+                    statusEl.style.display = 'block';
+                    statusEl.style.background = 'rgba(76, 175, 80, 0.2)';
+                    statusEl.style.border = '1px solid #4caf50';
+                    statusEl.style.color = '#4caf50';
+                    statusEl.textContent = '✅ Đăng nhập Google thành công! Đang chuyển hướng...';
+
+                    // Redirect to dashboard
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1500);
+                } else {
+                    throw new Error(authResult.message || 'Đăng nhập Google thất bại');
+                }
+            } catch (error) {
+                console.error('Google login error:', error);
+
+                // Show error message
+                statusEl.style.display = 'block';
+                statusEl.style.background = 'rgba(244, 67, 54, 0.2)';
+                statusEl.style.border = '1px solid #f44336';
+                statusEl.style.color = '#f44336';
+                statusEl.textContent = `❌ ${error.message}`;
+            } finally {
+                // Reset button
+                googleButton.textContent = '🔗 Đăng nhập với Google';
+                googleButton.disabled = false;
+            }
+        }
+
+        // Authenticate with Google Sheets
+        async function authenticateWithGoogleSheets(email, password) {
+            try {
+                // Get users from Google Sheets
+                const response = await fetch('/api/sheets/users', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Không thể kết nối đến Google Sheets');
+                }
+
+                const users = await response.json();
+
+                // Find user by email
+                const user = users.find(u => u.email === email);
+
+                if (!user) {
+                    throw new Error('Email không tồn tại');
+                }
+
+                // Simple password check (in real app, use proper hashing)
+                if (user.password !== password) {
+                    throw new Error('Mật khẩu không đúng');
+                }
+
+                // Generate token
+                const token = btoa(JSON.stringify({
+                    email: user.email,
+                    role: user.role,
+                    name: user.name,
+                    timestamp: Date.now()
+                }));
+
+                return {
+                    success: true,
+                    token: token,
+                    user: user
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: error.message
+                };
+            }
+        }
+
+        // Authenticate with Google
+        async function authenticateWithGoogle() {
+            try {
+                // Check if Google API is available
+                if (typeof gapi === 'undefined' || window.googleApiFallback) {
+                    throw new Error('Google API không khả dụng - sử dụng chế độ demo');
+                }
+
+                // Initialize Google API
+                await gapi.load('auth2', () => {
+                    gapi.auth2.init({
+                        client_id: '128969952901-djir9dcmuodpilfdua63eqd13f4cfjpb.apps.googleusercontent.com'
+                    });
+                });
+
+                // Sign in with Google
+                const authInstance = gapi.auth2.getAuthInstance();
+                const user = await authInstance.signIn();
+
+                const profile = user.getBasicProfile();
+                const email = profile.getEmail();
+                const name = profile.getName();
+
+                // Generate token
+                const token = btoa(JSON.stringify({
+                    email: email,
+                    name: name,
+                    provider: 'google',
+                    timestamp: Date.now()
+                }));
+
+                return {
+                    success: true,
+                    token: token,
+                    user: {
+                        email: email,
+                        name: name,
+                        provider: 'google'
+                    }
+                };
+            } catch (error) {
+                return {
+                    success: false,
+                    message: error.message
+                };
+            }
+        }
+
+        // Make utilities available globally
+        window.MIALogisticsAuth = {
+            setToken: setAuthToken,
+            getToken: getAuthToken,
+            clearToken: clearAuthToken,
+            isAuthenticated: isAuthenticated,
+            checkAuth: checkAuthentication,
+            checkBackend: checkBackendConnection,
+            authenticateWithGoogleSheets: authenticateWithGoogleSheets,
+            authenticateWithGoogle: authenticateWithGoogle
+        };
+
+        // Retry network connection
+        window.checkNetworkAndRedirect = checkNetworkAndRedirect;
+
+        // Listen for online/offline events
+        window.addEventListener('online', () => {
+            if (networkStatus === 'offline') {
+                updateNetworkStatus('online', 'Đã kết nối lại');
+                showLoadingMode();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        });
+
+        window.addEventListener('offline', () => {
+            updateNetworkStatus('offline', 'Mất kết nối');
+            showOfflineMode();
+        });
+
+        // Start the process when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            // Start network check immediately
+            checkNetworkAndRedirect();
+
+            // Fallback: if app doesn't load within 10 seconds, show offline mode
+            setTimeout(() => {
+                if (!isAppLoaded) {
+                    showOfflineMode();
+                }
+            }, 10000);
+        });
+
+        // Service Worker registration (always register for offline capabilities)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('%PUBLIC_URL%/sw.js')
+                    .then(function(registration) {
+                        console.log('Service Worker registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                        console.log('Service Worker registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // Global error handler
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+        });
+
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Unhandled promise rejection:', e.reason);
+        });
+    </script>
+</body>
+</html>

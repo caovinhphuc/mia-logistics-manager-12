@@ -1,0 +1,83 @@
+{
+  "timestamp": "2025-10-23T08:03:19.334Z",
+  "summary": {
+    "totalTests": 10,
+    "passedTests": 10,
+    "failedTests": 0,
+    "successRate": "100.00%"
+  },
+  "testDetails": [
+    {
+      "scenario": "user_registration",
+      "passed": true,
+      "duration": 0,
+      "error": null,
+      "timestamp": "2025-10-23T08:03:19.315Z"
+    },
+    {
+      "scenario": "user_login",
+      "passed": true,
+      "duration": 1,
+      "error": null,
+      "timestamp": "2025-10-23T08:03:19.325Z"
+    },
+    {
+      "scenario": "password_reset",
+      "passed": true,
+      "duration": 0,
+      "error": null,
+      "timestamp": "2025-10-23T08:03:19.325Z"
+    },
+    {
+      "scenario": "role_based_access",
+      "passed": true,
+      "duration": 2,
+      "error": null,
+      "timestamp": "2025-10-23T08:03:19.327Z"
+    },
+    {
+      "scenario": "permission_checks",
+      "passed": true,
+      "duration": 1,
+      "error": null,
+      "timestamp": "2025-10-23T08:03:19.328Z"
+    },
+    {
+      "scenario": "session_management",
+      "passed": true,
+      "duration": 3,
+      "error": null,
+      "timestamp": "2025-10-23T08:03:19.332Z"
+    },
+    {
+      "scenario": "security_guards",
+      "passed": true,
+      "duration": 0,
+      "error": null,
+      "timestamp": "2025-10-23T08:03:19.332Z"
+    },
+    {
+      "scenario": "performance_testing",
+      "passed": true,
+      "duration": 1,
+      "error": null,
+      "timestamp": "2025-10-23T08:03:19.333Z"
+    },
+    {
+      "scenario": "error_handling",
+      "passed": true,
+      "duration": 0,
+      "error": null,
+      "timestamp": "2025-10-23T08:03:19.333Z"
+    },
+    {
+      "scenario": "monitoring_integration",
+      "passed": true,
+      "duration": 1,
+      "error": null,
+      "timestamp": "2025-10-23T08:03:19.334Z"
+    }
+  ],
+  "users": 5,
+  "scenarios": 10
+}

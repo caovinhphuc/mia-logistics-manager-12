@@ -1,0 +1,52 @@
+{
+    "short_name": "MIA Logistics",
+    "name": "MIA Logistics Manager",
+    "description": "Hệ thống quản lý vận chuyển chuyên nghiệp",
+    "id": "/",
+    "icons": [
+        {
+            "src": "favicon.ico",
+            "sizes": "64x64 32x32 24x24 16x16",
+            "purpose": "any maskable",
+            "type": "image/x-icon"
+        },
+        {
+            "src": "logo192.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "logo512.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "any maskable"
+        }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#1976d2",
+    "background_color": "#ffffff",
+    "orientation": "any",
+    "scope": "/",
+    "lang": "vi",
+    "categories": ["business", "productivity", "logistics"],
+    "shortcuts": [
+        {
+            "name": "Dashboard",
+            "short_name": "Dashboard",
+            "description": "Xem bảng điều khiển chính",
+            "url": "/dashboard",
+            "icons": [{ "src": "/logo192.png", "sizes": "192x192" }]
+        },
+        {
+            "name": "Transport",
+            "short_name": "Vận chuyển",
+            "description": "Quản lý vận chuyển",
+            "url": "/transport",
+            "icons": [{ "src": "/logo192.png", "sizes": "192x192" }]
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false
+}
