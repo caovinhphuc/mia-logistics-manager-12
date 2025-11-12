@@ -13,19 +13,48 @@ import AuthLayout from './components/common/AuthLayout';
 import MainLayout from './components/common/MainLayout';
 
 // Import lazy-loaded pages
-const Dashboard = React.lazy(() => import('./pages/Dashboard'));
-const TransportManagement = React.lazy(() => import('./pages/Transport'));
-const WarehouseManagement = React.lazy(() => import('./pages/Warehouse'));
-const StaffManagement = React.lazy(() => import('./pages/Staff'));
-const PartnerManagement = React.lazy(() => import('./pages/Partners'));
-const MapView = React.lazy(() => import('./pages/Maps'));
-const NotificationCenter = React.lazy(() => import('./pages/NotificationCenter'));
-const ReportsCenter = React.lazy(() => import('./pages/ReportsCenter'));
-const Profile = React.lazy(() => import('./components/auth/Profile'));
-const Settings = React.lazy(() => import('./pages/Settings'));
-const NotFound = React.lazy(() => import('./components/common/NotFound'));
+import { lazyWithRetry } from './utils/lazyWithRetry';
 
-const Login = React.lazy(() => import('./components/auth/Login'));
+const Dashboard = lazyWithRetry(() => import('./pages/Dashboard'));
+const WarehouseManagement = lazyWithRetry(() => import('./pages/Warehouse'));
+const StaffManagement = lazyWithRetry(() => import('./pages/Staff'));
+const PartnerManagement = lazyWithRetry(() => import('./pages/Partners'));
+const MapView = lazyWithRetry(() => import('./pages/Maps'));
+const NotificationCenter = lazyWithRetry(
+  () => import('./pages/NotificationCenter')
+);
+const ReportsCenter = lazyWithRetry(() => import('./pages/ReportsCenter'));
+const Profile = lazyWithRetry(() => import('./components/auth/Profile'));
+const Settings = lazyWithRetry(() => import('./pages/Settings'));
+const NotFound = lazyWithRetry(() => import('./components/common/NotFound'));
+
+const loadTransportPage = (selector) =>
+  lazyWithRetry(() =>
+    import('./pages/Transport').then((module) => ({
+      default: selector(module),
+    }))
+  );
+
+const TransportOverview = loadTransportPage(
+  (module) => module.TransportOverviewPage || module.default
+);
+const TransportStorageLocations = loadTransportPage(
+  (module) => module.TransportStorageLocationsPage
+);
+const TransportVolumeCalculator = loadTransportPage(
+  (module) => module.TransportVolumeCalculatorPage
+);
+const TransportCarriers = loadTransportPage(
+  (module) => module.TransportCarriersPage
+);
+const TransportRequests = loadTransportPage(
+  (module) => module.TransportRequestsPage
+);
+const TransportPendingTransfers = loadTransportPage(
+  (module) => module.TransportPendingTransfersPage
+);
+
+const Login = lazyWithRetry(() => import('./components/auth/Login'));
 
 // Loading component
 const LoadingScreen = ({ message = 'Đang tải...' }) => {
@@ -104,6 +133,11 @@ const App = () => {
       '/': 'Trang chủ',
       '/dashboard': 'Bảng điều khiển',
       '/transport': 'Quản lý vận chuyển',
+      '/transport/storage-locations': 'Địa điểm lưu',
+      '/transport/volume-calculator': 'Bảng tính khối',
+      '/transport/carriers': 'Nhà vận chuyển',
+      '/transport/requests': 'Đề nghị vận chuyển',
+      '/transport/pending-transfers': 'Chờ chuyển giao',
       '/warehouse': 'Quản lý kho',
       '/staff': 'Quản lý nhân viên',
       '/partners': 'Quản lý đối tác',
@@ -168,11 +202,66 @@ const App = () => {
           />
 
           <Route
-            path="/transport/*"
+            path="/transport"
             element={
               <ProtectedRoute requiredRoles={['admin', 'manager', 'operator']}>
                 <MainLayout>
-                  <TransportManagement />
+                  <TransportOverview />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/transport/storage-locations"
+            element={
+              <ProtectedRoute requiredRoles={['admin', 'manager', 'operator']}>
+                <MainLayout>
+                  <TransportStorageLocations />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/transport/volume-calculator"
+            element={
+              <ProtectedRoute requiredRoles={['admin', 'manager', 'operator']}>
+                <MainLayout>
+                  <TransportVolumeCalculator />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/transport/carriers"
+            element={
+              <ProtectedRoute requiredRoles={['admin', 'manager', 'operator']}>
+                <MainLayout>
+                  <TransportCarriers />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/transport/requests"
+            element={
+              <ProtectedRoute requiredRoles={['admin', 'manager', 'operator']}>
+                <MainLayout>
+                  <TransportRequests />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/transport/pending-transfers"
+            element={
+              <ProtectedRoute requiredRoles={['admin', 'manager', 'operator']}>
+                <MainLayout>
+                  <TransportPendingTransfers />
                 </MainLayout>
               </ProtectedRoute>
             }
@@ -181,7 +270,9 @@ const App = () => {
           <Route
             path="/warehouse/*"
             element={
-              <ProtectedRoute requiredRoles={['admin', 'manager', 'warehouse_staff']}>
+              <ProtectedRoute
+                requiredRoles={['admin', 'manager', 'warehouse_staff']}
+              >
                 <MainLayout>
                   <WarehouseManagement />
                 </MainLayout>

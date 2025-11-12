@@ -1,24 +1,103 @@
 import {
-  Assessment, Business, Dashboard, Description, ExpandLess, ExpandMore, LocalShipping as CarriersIcon, LocalShipping, Map,
-  Notifications, People, Settings, ShoppingCart, Store, SupportAgent, SwapHoriz, Warehouse
+  Assessment,
+  AssignmentTurnedIn,
+  Business,
+  Calculate,
+  Dashboard,
+  Description,
+  ExpandLess,
+  ExpandMore,
+  LocalShipping as CarriersIcon,
+  LocalShipping,
+  LocationOn,
+  Map,
+  Notifications,
+  PendingActions,
+  People,
+  Settings,
+  ShoppingCart,
+  Store,
+  SupportAgent,
+  SwapHoriz,
+  Warehouse,
 } from '@mui/icons-material';
 import {
-  Box, Collapse, Drawer,
+  Box,
+  Collapse,
+  Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemText, Typography,
-  useTheme
+  ListItemText,
+  Typography,
+  useTheme,
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTheme as useCustomTheme } from '../../contexts/ThemeContext';
+import { useLanguage } from '../../contexts/LanguageContext';
+
+const MENU_LABEL_FALLBACKS = {
+  vi: {
+    'navigation.transport_overview': 'Tổng quan vận chuyển',
+    'navigation.transport_storage_locations': 'Địa điểm lưu',
+    'navigation.transport_volume_calculator': 'Bảng tính khối',
+    'navigation.transport_carriers': 'Nhà vận chuyển',
+    'navigation.transport_requests': 'Đề nghị vận chuyển',
+    'navigation.transport_pending_transfer': 'Chờ chuyển giao',
+  },
+  en: {
+    'navigation.transport_overview': 'Transport Overview',
+    'navigation.transport_storage_locations': 'Storage Locations',
+    'navigation.transport_volume_calculator': 'Volume Calculator',
+    'navigation.transport_carriers': 'Carriers',
+    'navigation.transport_requests': 'Transport Requests',
+    'navigation.transport_pending_transfer': 'Pending Transfers',
+  },
+};
 
 const menuItems = [
   { text: 'navigation.dashboard', icon: Dashboard, path: '/' },
-  { text: 'navigation.transport', icon: LocalShipping, path: '/transport' },
+  {
+    text: 'navigation.transport',
+    icon: LocalShipping,
+    path: '/transport',
+    hasSubmenu: true,
+    submenu: [
+      {
+        text: 'navigation.transport_overview',
+        icon: Dashboard,
+        path: '/transport',
+      },
+      {
+        text: 'navigation.transport_storage_locations',
+        icon: LocationOn,
+        path: '/transport/storage-locations',
+      },
+      {
+        text: 'navigation.transport_volume_calculator',
+        icon: Calculate,
+        path: '/transport/volume-calculator',
+      },
+      {
+        text: 'navigation.transport_carriers',
+        icon: CarriersIcon,
+        path: '/transport/carriers',
+      },
+      {
+        text: 'navigation.transport_requests',
+        icon: AssignmentTurnedIn,
+        path: '/transport/requests',
+      },
+      {
+        text: 'navigation.transport_pending_transfer',
+        icon: PendingActions,
+        path: '/transport/pending-transfers',
+      },
+    ],
+  },
   { text: 'navigation.warehouse', icon: Warehouse, path: '/warehouse' },
   { text: 'navigation.staff', icon: People, path: '/staff' },
   { text: 'navigation.partners', icon: Business, path: '/partners' },
@@ -29,15 +108,31 @@ const menuItems = [
     path: '/system-forms',
     hasSubmenu: true,
     submenu: [
-      { text: 'navigation.purchase_order', icon: ShoppingCart, path: '/purchase-order' },
-      { text: 'navigation.transfer_slip', icon: SwapHoriz, path: '/transfer-slip' },
+      {
+        text: 'navigation.purchase_order',
+        icon: ShoppingCart,
+        path: '/purchase-order',
+      },
+      {
+        text: 'navigation.transfer_slip',
+        icon: SwapHoriz,
+        path: '/transfer-slip',
+      },
       { text: 'navigation.online_order', icon: Store, path: '/online-order' },
       { text: 'navigation.offline_order', icon: Store, path: '/offline-order' },
-      { text: 'navigation.warranty_slip', icon: SupportAgent, path: '/warranty-slip' },
-    ]
+      {
+        text: 'navigation.warranty_slip',
+        icon: SupportAgent,
+        path: '/warranty-slip',
+      },
+    ],
   },
   { text: 'navigation.maps', icon: Map, path: '/maps' },
-  { text: 'navigation.notifications', icon: Notifications, path: '/notifications' },
+  {
+    text: 'navigation.notifications',
+    icon: Notifications,
+    path: '/notifications',
+  },
   { text: 'navigation.reports', icon: Assessment, path: '/reports' },
   { text: 'navigation.settings', icon: Settings, path: '/settings' },
 ];
@@ -46,9 +141,22 @@ const Sidebar = ({ onClose }) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { isDarkMode } = useCustomTheme();
+  const { language } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
   const [expandedItems, setExpandedItems] = useState({});
+
+  const translate = (key) => {
+    const value = t(key);
+    if (value === key) {
+      const fallback =
+        MENU_LABEL_FALLBACKS[language]?.[key] ??
+        MENU_LABEL_FALLBACKS.vi[key] ??
+        key;
+      return fallback;
+    }
+    return value;
+  };
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -58,9 +166,9 @@ const Sidebar = ({ onClose }) => {
   };
 
   const handleToggleSubmenu = (itemText) => {
-    setExpandedItems(prev => ({
+    setExpandedItems((prev) => ({
       ...prev,
-      [itemText]: !prev[itemText]
+      [itemText]: !prev[itemText],
     }));
   };
 
@@ -91,10 +199,14 @@ const Sidebar = ({ onClose }) => {
       {/* Navigation Menu */}
       <List sx={{ flexGrow: 1, pt: 1 }}>
         {menuItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.path;
-          const isExpanded = expandedItems[item.text];
           const hasSubmenu = item.hasSubmenu;
+          const Icon = item.icon;
+          const isActive =
+            location.pathname === item.path ||
+            (hasSubmenu && location.pathname.startsWith(`${item.path}/`));
+          const isExpanded =
+            expandedItems[item.text] ??
+            (hasSubmenu && location.pathname.startsWith(`${item.path}/`));
 
           return (
             <React.Fragment key={item.text}>
@@ -112,7 +224,9 @@ const Sidebar = ({ onClose }) => {
                     mb: 0.5,
                     borderRadius: 1,
                     backgroundColor: isActive
-                      ? (isDarkMode ? '#333' : '#e3f2fd')
+                      ? isDarkMode
+                        ? '#333'
+                        : '#e3f2fd'
                       : 'transparent',
                     '&:hover': {
                       backgroundColor: isDarkMode ? '#333' : '#f5f5f5',
@@ -122,20 +236,28 @@ const Sidebar = ({ onClose }) => {
                   <ListItemIcon
                     sx={{
                       color: isActive
-                        ? (isDarkMode ? '#fff' : '#1976d2')
-                        : (isDarkMode ? '#aaa' : '#666'),
+                        ? isDarkMode
+                          ? '#fff'
+                          : '#1976d2'
+                        : isDarkMode
+                          ? '#aaa'
+                          : '#666',
                       minWidth: 40,
                     }}
                   >
                     <Icon />
                   </ListItemIcon>
                   <ListItemText
-                    primary={t(item.text)}
+                    primary={translate(item.text)}
                     sx={{
                       '& .MuiListItemText-primary': {
                         color: isActive
-                          ? (isDarkMode ? '#fff' : '#1976d2')
-                          : (isDarkMode ? '#aaa' : '#333'),
+                          ? isDarkMode
+                            ? '#fff'
+                            : '#1976d2'
+                          : isDarkMode
+                            ? '#aaa'
+                            : '#333',
                         fontWeight: isActive ? 600 : 400,
                       },
                     }}
@@ -154,7 +276,9 @@ const Sidebar = ({ onClose }) => {
                   <List component="div" disablePadding>
                     {item.submenu.map((subItem) => {
                       const SubIcon = subItem.icon;
-                      const isSubActive = location.pathname === subItem.path;
+                      const isSubActive =
+                        location.pathname === subItem.path ||
+                        location.pathname.startsWith(`${subItem.path}/`);
 
                       return (
                         <ListItem key={subItem.text} disablePadding>
@@ -166,30 +290,42 @@ const Sidebar = ({ onClose }) => {
                               mb: 0.5,
                               borderRadius: 1,
                               backgroundColor: isSubActive
-                                ? (isDarkMode ? '#333' : '#e3f2fd')
+                                ? isDarkMode
+                                  ? '#333'
+                                  : '#e3f2fd'
                                 : 'transparent',
                               '&:hover': {
-                                backgroundColor: isDarkMode ? '#333' : '#f5f5f5',
+                                backgroundColor: isDarkMode
+                                  ? '#333'
+                                  : '#f5f5f5',
                               },
                             }}
                           >
                             <ListItemIcon
                               sx={{
                                 color: isSubActive
-                                  ? (isDarkMode ? '#fff' : '#1976d2')
-                                  : (isDarkMode ? '#aaa' : '#666'),
+                                  ? isDarkMode
+                                    ? '#fff'
+                                    : '#1976d2'
+                                  : isDarkMode
+                                    ? '#aaa'
+                                    : '#666',
                                 minWidth: 40,
                               }}
                             >
                               <SubIcon />
                             </ListItemIcon>
                             <ListItemText
-                              primary={t(subItem.text)}
+                              primary={translate(subItem.text)}
                               sx={{
                                 '& .MuiListItemText-primary': {
                                   color: isSubActive
-                                    ? (isDarkMode ? '#fff' : '#1976d2')
-                                    : (isDarkMode ? '#aaa' : '#333'),
+                                    ? isDarkMode
+                                      ? '#fff'
+                                      : '#1976d2'
+                                    : isDarkMode
+                                      ? '#aaa'
+                                      : '#333',
                                   fontWeight: isSubActive ? 600 : 400,
                                   fontSize: '0.9rem',
                                 },
@@ -208,7 +344,9 @@ const Sidebar = ({ onClose }) => {
       </List>
 
       {/* Footer */}
-      <Box sx={{ p: 2, borderTop: `1px solid ${isDarkMode ? '#333' : '#e0e0e0'}` }}>
+      <Box
+        sx={{ p: 2, borderTop: `1px solid ${isDarkMode ? '#333' : '#e0e0e0'}` }}
+      >
         <Typography
           variant="caption"
           sx={{
