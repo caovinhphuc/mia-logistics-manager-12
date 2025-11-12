@@ -2,9 +2,11 @@ import CryptoJS from 'crypto-js';
 
 class SessionService {
   constructor() {
-    this.encryptionKey = process.env.REACT_APP_ENCRYPTION_KEY || 'mia-logistics-default-key-2024';
+    this.encryptionKey =
+      process.env.REACT_APP_ENCRYPTION_KEY || 'mia-logistics-default-key-2024';
     this.sessionKey = 'mia-session';
-    this.sessionTimeout = parseInt(process.env.REACT_APP_SESSION_TIMEOUT) || 3600000; // 1 hour
+    this.sessionTimeout =
+      parseInt(process.env.REACT_APP_SESSION_TIMEOUT) || 3600000; // 1 hour
   }
 
   createSession(user) {
@@ -150,7 +152,10 @@ class SessionService {
 
   encryptData(data) {
     const jsonString = JSON.stringify(data);
-    const encrypted = CryptoJS.AES.encrypt(jsonString, this.encryptionKey).toString();
+    const encrypted = CryptoJS.AES.encrypt(
+      jsonString,
+      this.encryptionKey
+    ).toString();
     return encrypted;
   }
 
@@ -206,7 +211,10 @@ class SessionService {
       // Keep only last 100 activities
       const recentActivities = activities.slice(-100);
 
-      localStorage.setItem('mia-activity-log', JSON.stringify(recentActivities));
+      localStorage.setItem(
+        'mia-activity-log',
+        JSON.stringify(recentActivities)
+      );
     } catch (error) {
       console.error('Failed to track activity:', error);
     }
@@ -257,7 +265,9 @@ class SessionService {
       timeToExpiry: expiresAt - now,
       lastActivityTime: now - lastActivity,
       isExpired: now > expiresAt,
-      activitiesCount: this.getActivityLog().filter(a => a.sessionId === session.id).length,
+      activitiesCount: this.getActivityLog().filter(
+        (a) => a.sessionId === session.id
+      ).length,
     };
   }
 }

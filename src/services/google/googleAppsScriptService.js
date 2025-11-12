@@ -39,7 +39,9 @@ class GoogleAppsScriptService {
         process.env.REACT_APP_ENABLE_GOOGLE_APPS_SCRIPT === 'false' ||
         process.env.REACT_APP_GOOGLE_APPS_SCRIPT_ID === 'disabled'
       ) {
-        console.log('🔧 Google Apps Script disabled in environment configuration');
+        console.log(
+          '🔧 Google Apps Script disabled in environment configuration'
+        );
         this.isConnected = false;
         return;
       }
@@ -50,7 +52,9 @@ class GoogleAppsScriptService {
       }
 
       if (!googleAuthService.isInitialized) {
-        console.log('🔧 Google Auth not initialized, skipping Apps Script connection');
+        console.log(
+          '🔧 Google Auth not initialized, skipping Apps Script connection'
+        );
         this.isConnected = false;
         return;
       }
@@ -75,14 +79,21 @@ class GoogleAppsScriptService {
         !process.env.REACT_APP_GOOGLE_APPS_SCRIPT_ID ||
         process.env.REACT_APP_GOOGLE_APPS_SCRIPT_ID === 'disabled'
       ) {
-        console.log('🔧 Google Apps Script disabled or not configured, using mock mode');
+        console.log(
+          '🔧 Google Apps Script disabled or not configured, using mock mode'
+        );
         return this.connectMockMode(scriptId);
       }
 
-      const { enableCaching = true, enableRateLimiting = true, timeout = 30000 } = options;
+      const {
+        enableCaching = true,
+        enableRateLimiting = true,
+        timeout = 30000,
+      } = options;
 
       this.scriptId = scriptId;
-      this.webAppUrl = webAppUrl || process.env.REACT_APP_APPS_SCRIPT_WEB_APP_URL;
+      this.webAppUrl =
+        webAppUrl || process.env.REACT_APP_APPS_SCRIPT_WEB_APP_URL;
       this.connectionSettings.enableCaching = enableCaching;
       this.connectionSettings.enableRateLimiting = enableRateLimiting;
       this.connectionSettings.timeout = timeout;
@@ -94,7 +105,9 @@ class GoogleAppsScriptService {
       await this.loadAvailableFunctions();
 
       this.isConnected = true;
-      console.log(`✅ Connected to Apps Script: ${scriptInfo.title || scriptId}`);
+      console.log(
+        `✅ Connected to Apps Script: ${scriptInfo.title || scriptId}`
+      );
 
       return {
         scriptId,
@@ -120,14 +133,21 @@ class GoogleAppsScriptService {
     console.log('🔧 Using mock Google Apps Script mode');
 
     // Use a more descriptive mock script ID
-    this.scriptId = scriptId === 'your-apps-script-id' ? 'mock-apps-script-dev' : scriptId;
+    this.scriptId =
+      scriptId === 'your-apps-script-id' ? 'mock-apps-script-dev' : scriptId;
     this.isConnected = true;
 
     return {
       scriptId: this.scriptId,
       title: 'MIA Logistics Manager (Mock Apps Script)',
       lastModified: new Date().toISOString(),
-      functions: ['getCarriers', 'addCarrier', 'updateCarrier', 'deleteCarrier', 'getStats'],
+      functions: [
+        'getCarriers',
+        'addCarrier',
+        'updateCarrier',
+        'deleteCarrier',
+        'getStats',
+      ],
       lastConnected: new Date().toISOString(),
       mode: 'mock',
       executionTime: 21,
@@ -282,18 +302,25 @@ class GoogleAppsScriptService {
     try {
       const headers = await googleAuthService.getAuthHeaders();
 
-      const response = await this.makeRequest(`${this.apiUrl}/projects/${this.scriptId}`, {
-        headers,
-        method: 'GET',
-      });
+      const response = await this.makeRequest(
+        `${this.apiUrl}/projects/${this.scriptId}`,
+        {
+          headers,
+          method: 'GET',
+        }
+      );
 
       if (!response.ok) {
         // Handle specific error cases
         if (response.status === 403) {
-          console.warn('⚠️ Google Apps Script API access denied. This is normal for development.');
+          console.warn(
+            '⚠️ Google Apps Script API access denied. This is normal for development.'
+          );
           return { title: 'Development Script', id: this.scriptId };
         } else if (response.status === 404) {
-          console.warn('⚠️ Google Apps Script not found. This is normal for development.');
+          console.warn(
+            '⚠️ Google Apps Script not found. This is normal for development.'
+          );
           return { title: 'Development Script', id: this.scriptId };
         } else {
           throw new Error(`Failed to get script info: ${response.statusText}`);
@@ -302,8 +329,13 @@ class GoogleAppsScriptService {
 
       return await response.json();
     } catch (error) {
-      console.warn('⚠️ Failed to get script info (this is normal for development):', error.message);
-      console.log('🔧 Google Apps Script Service disabled for now to focus on Google Sheets');
+      console.warn(
+        '⚠️ Failed to get script info (this is normal for development):',
+        error.message
+      );
+      console.log(
+        '🔧 Google Apps Script Service disabled for now to focus on Google Sheets'
+      );
       // Return mock data for development
       return { title: 'Development Script', id: this.scriptId };
     }
@@ -345,7 +377,9 @@ class GoogleAppsScriptService {
         'calculateRouteEfficiency',
       ];
 
-      console.log(`📋 Loaded ${this.availableFunctions.length} available functions`);
+      console.log(
+        `📋 Loaded ${this.availableFunctions.length} available functions`
+      );
       return this.availableFunctions;
     } catch (error) {
       console.error('❌ Failed to load available functions:', error);
@@ -388,12 +422,15 @@ class GoogleAppsScriptService {
           devMode: process.env.NODE_ENV === 'development',
         };
 
-        const response = await this.makeRequest(`${this.apiUrl}/scripts/${this.scriptId}:run`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(requestBody),
-          timeout,
-        });
+        const response = await this.makeRequest(
+          `${this.apiUrl}/scripts/${this.scriptId}:run`,
+          {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(requestBody),
+            timeout,
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`Function execution failed: ${response.statusText}`);
@@ -402,7 +439,9 @@ class GoogleAppsScriptService {
         const result = await response.json();
 
         if (result.error) {
-          throw new Error(`Script error: ${result.error.details[0].errorMessage}`);
+          throw new Error(
+            `Script error: ${result.error.details[0].errorMessage}`
+          );
         }
 
         const executionTime = Date.now() - startTime;
@@ -416,10 +455,14 @@ class GoogleAppsScriptService {
           });
         }
 
-        console.log(`✅ Function ${functionName} executed successfully in ${executionTime}ms`);
+        console.log(
+          `✅ Function ${functionName} executed successfully in ${executionTime}ms`
+        );
         return result.response?.result;
       } catch (apiError) {
-        console.log(`⚠️ Apps Script API error: ${apiError.message}, returning mock result`);
+        console.log(
+          `⚠️ Apps Script API error: ${apiError.message}, returning mock result`
+        );
         return this.getMockFunctionResult(functionName, parameters);
       }
     } catch (error) {
@@ -428,7 +471,10 @@ class GoogleAppsScriptService {
 
       if (retryOnError) {
         return await this.retryOperation(() =>
-          this.runFunction(functionName, parameters, { ...options, retryOnError: false })
+          this.runFunction(functionName, parameters, {
+            ...options,
+            retryOnError: false,
+          })
         );
       }
 
@@ -440,7 +486,8 @@ class GoogleAppsScriptService {
 
   async runWebAppFunction(functionName, parameters = {}, options = {}) {
     try {
-      const { timeout = this.connectionSettings.timeout, retryOnError = true } = options;
+      const { timeout = this.connectionSettings.timeout, retryOnError = true } =
+        options;
 
       if (!this.webAppUrl) {
         throw new Error('Web App URL not configured');
@@ -475,11 +522,17 @@ class GoogleAppsScriptService {
       return result;
     } catch (error) {
       this.trackPerformance(functionName, 0, false);
-      console.error(`❌ Failed to run web app function ${functionName}:`, error);
+      console.error(
+        `❌ Failed to run web app function ${functionName}:`,
+        error
+      );
 
       if (retryOnError) {
         return await this.retryOperation(() =>
-          this.runWebAppFunction(functionName, parameters, { ...options, retryOnError: false })
+          this.runWebAppFunction(functionName, parameters, {
+            ...options,
+            retryOnError: false,
+          })
         );
       }
 
@@ -535,7 +588,9 @@ class GoogleAppsScriptService {
         if (i === attempts - 1) throw error;
 
         console.warn(`⚠️ Operation failed, retrying... (${i + 1}/${attempts})`);
-        await new Promise((resolve) => setTimeout(resolve, this.retryDelay * (i + 1)));
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.retryDelay * (i + 1))
+        );
       }
     }
   }
@@ -686,7 +741,10 @@ class GoogleAppsScriptService {
       };
 
       if (this.webAppUrl) {
-        return await this.runWebAppFunction('calculateDeliveryTime', parameters);
+        return await this.runWebAppFunction(
+          'calculateDeliveryTime',
+          parameters
+        );
       } else {
         return await this.runFunction('calculateDeliveryTime', [parameters]);
       }
@@ -746,7 +804,11 @@ class GoogleAppsScriptService {
       if (this.webAppUrl) {
         return await this.runWebAppFunction('calculateFuelCost', parameters);
       } else {
-        return await this.runFunction('calculateFuelCost', [distance, fuelPrice, consumption]);
+        return await this.runFunction('calculateFuelCost', [
+          distance,
+          fuelPrice,
+          consumption,
+        ]);
       }
     } catch (error) {
       console.error('❌ Fuel cost calculation failed:', error);
@@ -766,7 +828,10 @@ class GoogleAppsScriptService {
       };
 
       if (this.webAppUrl) {
-        return await this.runWebAppFunction('optimizeMultipleRoutes', parameters);
+        return await this.runWebAppFunction(
+          'optimizeMultipleRoutes',
+          parameters
+        );
       } else {
         return await this.runFunction('optimizeMultipleRoutes', [parameters]);
       }
@@ -850,7 +915,10 @@ class GoogleAppsScriptService {
       };
 
       if (this.webAppUrl) {
-        return await this.runWebAppFunction('optimizeDeliverySchedule', parameters);
+        return await this.runWebAppFunction(
+          'optimizeDeliverySchedule',
+          parameters
+        );
       } else {
         return await this.runFunction('optimizeDeliverySchedule', [parameters]);
       }
@@ -870,7 +938,10 @@ class GoogleAppsScriptService {
       };
 
       if (this.webAppUrl) {
-        return await this.runWebAppFunction('validateDriverLicense', parameters);
+        return await this.runWebAppFunction(
+          'validateDriverLicense',
+          parameters
+        );
       } else {
         return await this.runFunction('validateDriverLicense', [parameters]);
       }
@@ -891,7 +962,10 @@ class GoogleAppsScriptService {
       };
 
       if (this.webAppUrl) {
-        return await this.runWebAppFunction('calculateInsuranceCost', parameters);
+        return await this.runWebAppFunction(
+          'calculateInsuranceCost',
+          parameters
+        );
       } else {
         return await this.runFunction('calculateInsuranceCost', [parameters]);
       }
@@ -932,7 +1006,10 @@ class GoogleAppsScriptService {
       };
 
       if (this.webAppUrl) {
-        return await this.runWebAppFunction('calculateMaintenanceCost', parameters);
+        return await this.runWebAppFunction(
+          'calculateMaintenanceCost',
+          parameters
+        );
       } else {
         return await this.runFunction('calculateMaintenanceCost', [parameters]);
       }

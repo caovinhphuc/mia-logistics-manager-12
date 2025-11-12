@@ -1,5 +1,5 @@
 // Carriers Service - Quản lý nhà vận chuyển
-import { googleSheetsService } from './googleSheetsService';
+import { googleSheetsService } from '../../../services/google/googleSheetsService';
 
 // Định nghĩa Carrier type
 export class Carrier {
@@ -58,7 +58,7 @@ export class CarriersService {
           status: carrierData.status || 'active',
           avatarUrl: carrierData.avatarUrl || '',
           createdAt: carrierData.createdAt || new Date().toISOString(),
-          updatedAt: carrierData.updatedAt || new Date().toISOString()
+          updatedAt: carrierData.updatedAt || new Date().toISOString(),
         });
       });
 
@@ -73,7 +73,7 @@ export class CarriersService {
   async getActiveCarriers() {
     try {
       const carriers = await this.getCarriers();
-      return carriers.filter(carrier => carrier.status === 'active');
+      return carriers.filter((carrier) => carrier.status === 'active');
     } catch (error) {
       console.error('Lỗi lấy carriers đang hoạt động:', error);
       throw error;
@@ -84,7 +84,7 @@ export class CarriersService {
   async getCarrierById(carrierId) {
     try {
       const carriers = await this.getCarriers();
-      return carriers.find(carrier => carrier.carrierId === carrierId);
+      return carriers.find((carrier) => carrier.carrierId === carrierId);
     } catch (error) {
       console.error('Lỗi lấy carrier theo ID:', error);
       throw error;
@@ -100,7 +100,7 @@ export class CarriersService {
         ...carrierData,
         carrierId: `carrier_${Date.now()}`,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       });
 
       const values = [
@@ -112,8 +112,8 @@ export class CarriersService {
           newCarrier.status,
           newCarrier.avatarUrl,
           newCarrier.createdAt,
-          newCarrier.updatedAt
-        ]
+          newCarrier.updatedAt,
+        ],
       ];
 
       await googleSheetsService.appendData(this.sheetName, values);
@@ -130,7 +130,7 @@ export class CarriersService {
       await this.initialize();
 
       const carriers = await this.getCarriers();
-      const carrierIndex = carriers.findIndex(c => c.carrierId === carrierId);
+      const carrierIndex = carriers.findIndex((c) => c.carrierId === carrierId);
 
       if (carrierIndex === -1) {
         throw new Error('Carrier không tồn tại');
@@ -139,7 +139,7 @@ export class CarriersService {
       const updatedCarrier = {
         ...carriers[carrierIndex],
         ...updates,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       // Cập nhật trong Google Sheets
@@ -153,8 +153,8 @@ export class CarriersService {
           updatedCarrier.status,
           updatedCarrier.avatarUrl,
           updatedCarrier.createdAt,
-          updatedCarrier.updatedAt
-        ]
+          updatedCarrier.updatedAt,
+        ],
       ];
 
       await googleSheetsService.updateValues(
@@ -176,7 +176,7 @@ export class CarriersService {
       await this.initialize();
 
       const carriers = await this.getCarriers();
-      const carrierIndex = carriers.findIndex(c => c.carrierId === carrierId);
+      const carrierIndex = carriers.findIndex((c) => c.carrierId === carrierId);
 
       if (carrierIndex === -1) {
         throw new Error('Carrier không tồn tại');
@@ -212,7 +212,7 @@ export class CarriersService {
       volumeRate,
       weightRate,
       totalCost,
-      carrier: carrier.name
+      carrier: carrier.name,
     };
   }
 }

@@ -32,13 +32,17 @@ async function initializeServices() {
 
     // Initialize real-time service
     console.log('🌐 [3/5] KHỞI TẠO REAL-TIME SOCKET.IO...');
-    const { default: realtimeService } = await import('../services/realtimeService.js');
+    const { default: realtimeService } = await import(
+      '../services/realtimeService.js'
+    );
     realtimeService.init(server);
     console.log('✅ Socket.IO Real-time: HOÀN THÀNH\n');
 
     // Initialize notification manager
     console.log('📅 [4/5] KHỞI TẠO NOTIFICATION MANAGER...');
-    const { default: notificationManager } = await import('../services/notificationManager.js');
+    const { default: notificationManager } = await import(
+      '../services/notificationManager.js'
+    );
     console.log('✅ Notification Manager: HOÀN THÀNH');
     console.log('⏰ Cron Jobs: Daily, Weekly, Monthly Reports');
     console.log('📧 Email Service: Ready');
@@ -46,7 +50,9 @@ async function initializeServices() {
 
     // Initialize Telegram service
     console.log('🤖 [5/5] KHỞI TẠO TELEGRAM BOT SERVICE...');
-    const { default: telegramService } = await import('../services/telegramService.js');
+    const { default: telegramService } = await import(
+      '../services/telegramService.js'
+    );
 
     // Check Telegram configuration
     if (
@@ -54,10 +60,15 @@ async function initializeServices() {
       process.env.TELEGRAM_BOT_TOKEN !== 'your_telegram_bot_token_here'
     ) {
       console.log('🔑 Bot Token: ✅ Đã cấu hình');
-      console.log(`📱 Chat ID: ${process.env.TELEGRAM_CHAT_ID || 'Chưa cấu hình'}`);
+      console.log(
+        `📱 Chat ID: ${process.env.TELEGRAM_CHAT_ID || 'Chưa cấu hình'}`
+      );
 
       // Check webhook vs polling mode
-      if (process.env.TELEGRAM_WEBHOOK_URL && process.env.TELEGRAM_WEBHOOK_URL.trim() !== '') {
+      if (
+        process.env.TELEGRAM_WEBHOOK_URL &&
+        process.env.TELEGRAM_WEBHOOK_URL.trim() !== ''
+      ) {
         console.log('🌐 Chế độ: Webhook Mode');
         telegramService.setupWebhook();
       } else {
@@ -107,7 +118,9 @@ async function initializeServices() {
       `   💾 Memory Usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`
     );
     console.log(`   🔄 Event Loop Lag: < 1ms`);
-    console.log(`   ⏱️  Startup Time: ${Math.round(process.uptime() * 1000)} ms`);
+    console.log(
+      `   ⏱️  Startup Time: ${Math.round(process.uptime() * 1000)} ms`
+    );
 
     console.log('\n🎉 ==========================================');
     console.log('🚀 SERVER SẴN SÀNG PHỤC VỤ!');
@@ -134,7 +147,9 @@ function displaySystemInfo() {
   console.log(`🟢 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🟢 Server Port: ${PORT}`);
   console.log(`🟢 Process PID: ${process.pid}`);
-  console.log(`🟢 Memory Usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`);
+  console.log(
+    `🟢 Memory Usage: ${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`
+  );
   console.log(`🟢 Uptime: ${Math.round(process.uptime())} seconds`);
   console.log('📋 ==========================================');
   console.log('🌐 URLs:');
@@ -159,21 +174,29 @@ server.listen(PORT, async () => {
 // Handle port already in use error
 server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
-    console.error(`❌ Port ${PORT} is already in use. Trying to kill existing process...`);
+    console.error(
+      `❌ Port ${PORT} is already in use. Trying to kill existing process...`
+    );
 
     // Try to find and kill the process using the port
     const { exec } = require('child_process');
     exec(`lsof -ti:${PORT}`, (error, stdout, stderr) => {
       if (stdout) {
         const pid = stdout.trim();
-        console.log(`🔍 Found process ${pid} using port ${PORT}. Killing it...`);
+        console.log(
+          `🔍 Found process ${pid} using port ${PORT}. Killing it...`
+        );
         exec(`kill -9 ${pid}`, (killError, killStdout, killStderr) => {
           if (killError) {
             console.error(`❌ Failed to kill process: ${killError.message}`);
-            console.error('💡 Please manually kill the process or use a different port');
+            console.error(
+              '💡 Please manually kill the process or use a different port'
+            );
             process.exit(1);
           } else {
-            console.log(`✅ Process ${pid} killed successfully. Restarting server...`);
+            console.log(
+              `✅ Process ${pid} killed successfully. Restarting server...`
+            );
             // Restart server after a short delay
             setTimeout(() => {
               server.listen(PORT, () => {
@@ -184,7 +207,9 @@ server.on('error', (err) => {
         });
       } else {
         console.error(`❌ Could not find process using port ${PORT}`);
-        console.error('💡 Please manually kill the process or use a different port');
+        console.error(
+          '💡 Please manually kill the process or use a different port'
+        );
         process.exit(1);
       }
     });

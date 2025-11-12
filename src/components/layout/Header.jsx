@@ -1,11 +1,20 @@
 import {
-  AccountCircle, Language, Logout,
-  Notifications, Settings
+  AccountCircle,
+  Language,
+  Logout,
+  Notifications,
+  Settings,
 } from '@mui/icons-material';
 import {
-  Avatar, Box, Divider, IconButton, ListItemIcon,
-  ListItemText, Menu,
-  MenuItem, Typography
+  Avatar,
+  Box,
+  Divider,
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Typography,
 } from '@mui/material';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -55,7 +64,14 @@ const Header = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
+      }}
+    >
       {/* Logo/Title */}
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
@@ -94,11 +110,7 @@ const Header = () => {
         </Menu>
 
         {/* Notifications */}
-        <IconButton
-          size="large"
-          aria-label="notifications"
-          color="inherit"
-        >
+        <IconButton size="large" aria-label="notifications" color="inherit">
           <Notifications />
         </IconButton>
 

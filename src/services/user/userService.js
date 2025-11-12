@@ -6,17 +6,24 @@ export class User {
     this.id = data.id || '';
     this.username = data.username || '';
     this.email = data.email || '';
-    this.passwordHash = data.password_hash || '';
-    this.fullName = data.full_name || '';
+    // Accept both passwordHash and password_hash
+    this.passwordHash = data.passwordHash || data.password_hash || '';
+    this.fullName = data.fullName || data.full_name || data.name || '';
     this.phone = data.phone || '';
     this.avatarUrl = data.avatar_url || '';
+    this.role = data.role || 'user';
     this.isActive =
       data.is_active === 'true' ||
       data.is_active === true ||
+      data.isActive === 'true' ||
+      data.isActive === true ||
+      data.status === 'active' ||
       (data.is_active !== 'false' && data.is_active !== false);
     this.lastLogin = data.last_login || null;
-    this.createdAt = data.created_at || new Date().toISOString();
-    this.updatedAt = data.updated_at || new Date().toISOString();
+    this.createdAt =
+      data.created_at || data.createdAt || new Date().toISOString();
+    this.updatedAt =
+      data.updated_at || data.updatedAt || new Date().toISOString();
   }
 
   toGoogleSheets() {
@@ -40,7 +47,8 @@ export class UserService {
   constructor() {
     this.sheetName = 'Users';
     this.spreadsheetId =
-      process.env.REACT_APP_GOOGLE_SPREADSHEET_ID || '18B1PIhCDmBWyHZytvOcfj_1QbYBwczLf1x1Qbu0E5As';
+      process.env.REACT_APP_GOOGLE_SPREADSHEET_ID ||
+      '18B1PIhCDmBWyHZytvOcfj_1QbYBwczLf1x1Qbu0E5As';
   }
 
   async initialize() {
@@ -98,14 +106,19 @@ export class UserService {
         };
 
         // Đảm bảo status được xử lý đúng
-        if (mappedUserData.status === undefined || mappedUserData.status === '') {
+        if (
+          mappedUserData.status === undefined ||
+          mappedUserData.status === ''
+        ) {
           mappedUserData.status = 'active'; // Default to active
         }
 
         return new User(mappedUserData);
       });
 
-      console.log(`📊 Lấy danh sách users từ Google Sheets: ${users.length} người dùng`);
+      console.log(
+        `📊 Lấy danh sách users từ Google Sheets: ${users.length} người dùng`
+      );
       return users;
     } catch (error) {
       console.error('❌ Lỗi lấy danh sách users:', error);
@@ -151,7 +164,8 @@ export class UserService {
         id: 'u-admin',
         username: 'admin',
         email: 'admin@mia.vn',
-        password_hash: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
+        password_hash:
+          '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
         full_name: 'Administrator',
         phone: '0123456789',
         avatar_url: '',
@@ -165,7 +179,8 @@ export class UserService {
         id: '2',
         username: 'manager1',
         email: 'manager@mia-logistics.com',
-        password_hash: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
+        password_hash:
+          '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
         full_name: 'Manager User',
         phone: '0123456788',
         avatar_url: '',
@@ -179,7 +194,8 @@ export class UserService {
         id: '3',
         username: 'employee1',
         email: 'employee@mia-logistics.com',
-        password_hash: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
+        password_hash:
+          '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
         full_name: 'Employee User',
         phone: '0123456787',
         avatar_url: '',
@@ -193,7 +209,8 @@ export class UserService {
         id: '4',
         username: 'driver1',
         email: 'driver@mia-logistics.com',
-        password_hash: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
+        password_hash:
+          '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
         full_name: 'Driver User',
         phone: '0123456786',
         avatar_url: '',
@@ -207,7 +224,8 @@ export class UserService {
         id: '5',
         username: 'warehouse1',
         email: 'warehouse@mia-logistics.com',
-        password_hash: '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
+        password_hash:
+          '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
         full_name: 'Warehouse Staff',
         phone: '0123456785',
         avatar_url: '',
@@ -226,7 +244,9 @@ export class UserService {
 
       // Generate new ID
       const users = await this.getUsers();
-      const newId = (Math.max(...users.map((u) => parseInt(u.id) || 0)) + 1).toString();
+      const newId = (
+        Math.max(...users.map((u) => parseInt(u.id) || 0)) + 1
+      ).toString();
 
       const user = new User({
         ...userData,
@@ -295,7 +315,10 @@ export class UserService {
       }
 
       // Delete row in Google Sheets (row index = userIndex + 2 because of header)
-      await googleSheetsService.deleteData(this.sheetName, `A${userIndex + 2}:K${userIndex + 2}`);
+      await googleSheetsService.deleteData(
+        this.sheetName,
+        `A${userIndex + 2}:K${userIndex + 2}`
+      );
 
       console.log(`✅ Đã xóa user: ${userId}`);
       return true;
@@ -308,7 +331,9 @@ export class UserService {
   async updateLastLogin(userId) {
     try {
       // Tạm thời disable cập nhật Google Sheets vì lỗi API
-      console.log(`ℹ️ Bỏ qua cập nhật last_login cho user ${userId} - Google Sheets API error`);
+      console.log(
+        `ℹ️ Bỏ qua cập nhật last_login cho user ${userId} - Google Sheets API error`
+      );
       return true;
 
       // Code cũ (đã comment):

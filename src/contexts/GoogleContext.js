@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useEffect, useReducer } from "react";
-import { googleAppsScriptService } from "../services/google/googleAppsScriptService";
-import { googleDriveService } from "../services/google/googleDriveService";
-import { googleSheetsService } from "../services/google/googleSheetsService";
+import { createContext, useContext, useEffect, useReducer } from 'react';
+import { googleAppsScriptService } from '../services/google/googleAppsScriptService';
+import { googleDriveService } from '../services/google/googleDriveService';
+import { googleSheetsService } from '../services/google/googleSheetsService';
 
 // Google state structure
 const initialState = {
@@ -28,15 +28,15 @@ const initialState = {
 
 // Google actions
 const GOOGLE_ACTIONS = {
-  SET_LOADING: "SET_LOADING",
-  SET_ERROR: "SET_ERROR",
-  CLEAR_ERROR: "CLEAR_ERROR",
-  INITIALIZE_SUCCESS: "INITIALIZE_SUCCESS",
-  CONNECT_SHEETS: "CONNECT_SHEETS",
-  CONNECT_DRIVE: "CONNECT_DRIVE",
-  CONNECT_APPS_SCRIPT: "CONNECT_APPS_SCRIPT",
-  DISCONNECT: "DISCONNECT",
-  UPDATE_SYNC: "UPDATE_SYNC",
+  SET_LOADING: 'SET_LOADING',
+  SET_ERROR: 'SET_ERROR',
+  CLEAR_ERROR: 'CLEAR_ERROR',
+  INITIALIZE_SUCCESS: 'INITIALIZE_SUCCESS',
+  CONNECT_SHEETS: 'CONNECT_SHEETS',
+  CONNECT_DRIVE: 'CONNECT_DRIVE',
+  CONNECT_APPS_SCRIPT: 'CONNECT_APPS_SCRIPT',
+  DISCONNECT: 'DISCONNECT',
+  UPDATE_SYNC: 'UPDATE_SYNC',
 };
 
 // Google reducer
@@ -137,15 +137,15 @@ export const GoogleProvider = ({ children }) => {
 
       // Check results and log any failures
       results.forEach((result, index) => {
-        const serviceNames = ["Sheets", "Drive", "Apps Script"];
-        if (result.status === "rejected") {
+        const serviceNames = ['Sheets', 'Drive', 'Apps Script'];
+        if (result.status === 'rejected') {
           console.warn(
             `⚠️ ${serviceNames[index]} service failed to initialize:`,
-            result.reason,
+            result.reason
           );
         } else {
           console.log(
-            `✅ ${serviceNames[index]} service initialized successfully`,
+            `✅ ${serviceNames[index]} service initialized successfully`
           );
         }
       });
@@ -156,9 +156,9 @@ export const GoogleProvider = ({ children }) => {
       // Auto-connect if credentials are available
       await autoConnect();
     } catch (error) {
-      console.error("Google services initialization error:", error);
+      console.error('Google services initialization error:', error);
       // Don't set error state, just log it
-      console.log("🔧 Google services will work in mock mode");
+      console.log('🔧 Google services will work in mock mode');
       dispatch({ type: GOOGLE_ACTIONS.INITIALIZE_SUCCESS });
     }
   };
@@ -166,8 +166,8 @@ export const GoogleProvider = ({ children }) => {
   const autoConnect = async () => {
     try {
       // Check if Google services are enabled before auto-connecting
-      if (process.env.REACT_APP_USE_MOCK_DATA === "true") {
-        console.log("🔧 Mock mode enabled, skipping auto-connect");
+      if (process.env.REACT_APP_USE_MOCK_DATA === 'true') {
+        console.log('🔧 Mock mode enabled, skipping auto-connect');
         return;
       }
 
@@ -175,22 +175,22 @@ export const GoogleProvider = ({ children }) => {
       const spreadsheetId = process.env.REACT_APP_GOOGLE_SPREADSHEET_ID;
       if (
         spreadsheetId &&
-        process.env.REACT_APP_ENABLE_GOOGLE_SHEETS === "true"
+        process.env.REACT_APP_ENABLE_GOOGLE_SHEETS === 'true'
       ) {
         try {
           await connectSheets(spreadsheetId);
         } catch (error) {
-          console.warn("Auto-connect Sheets failed:", error.message);
+          console.warn('Auto-connect Sheets failed:', error.message);
         }
       }
 
       // Try to connect to Google Drive if enabled
       const folderId = process.env.REACT_APP_GOOGLE_DRIVE_FOLDER_ID;
-      if (folderId && process.env.REACT_APP_ENABLE_GOOGLE_DRIVE === "true") {
+      if (folderId && process.env.REACT_APP_ENABLE_GOOGLE_DRIVE === 'true') {
         try {
           await connectDrive(folderId);
         } catch (error) {
-          console.warn("Auto-connect Drive failed:", error.message);
+          console.warn('Auto-connect Drive failed:', error.message);
         }
       }
 
@@ -198,16 +198,16 @@ export const GoogleProvider = ({ children }) => {
       const scriptId = process.env.REACT_APP_GOOGLE_APPS_SCRIPT_ID;
       if (
         scriptId &&
-        process.env.REACT_APP_ENABLE_GOOGLE_APPS_SCRIPT === "true"
+        process.env.REACT_APP_ENABLE_GOOGLE_APPS_SCRIPT === 'true'
       ) {
         try {
           await connectAppsScript(scriptId);
         } catch (error) {
-          console.warn("Auto-connect Apps Script failed:", error.message);
+          console.warn('Auto-connect Apps Script failed:', error.message);
         }
       }
     } catch (error) {
-      console.warn("Auto-connect failed:", error.message);
+      console.warn('Auto-connect failed:', error.message);
     }
   };
 
@@ -257,8 +257,8 @@ export const GoogleProvider = ({ children }) => {
   const connectAppsScript = async (scriptId) => {
     try {
       // Temporarily disable Apps Script connection to avoid errors
-      console.log("🔧 Google Apps Script connection disabled for now");
-      return { success: false, message: "Apps Script disabled" };
+      console.log('🔧 Google Apps Script connection disabled for now');
+      return { success: false, message: 'Apps Script disabled' };
     } catch (error) {
       dispatch({ type: GOOGLE_ACTIONS.SET_ERROR, payload: error.message });
       throw error;
@@ -275,7 +275,7 @@ export const GoogleProvider = ({ children }) => {
 
       dispatch({ type: GOOGLE_ACTIONS.DISCONNECT });
     } catch (error) {
-      console.error("Disconnect error:", error);
+      console.error('Disconnect error:', error);
       dispatch({ type: GOOGLE_ACTIONS.SET_ERROR, payload: error.message });
     }
   };
@@ -295,7 +295,7 @@ export const GoogleProvider = ({ children }) => {
       const result = await googleSheetsService.updateValues(
         sheetName,
         range,
-        values,
+        values
       );
       dispatch({
         type: GOOGLE_ACTIONS.UPDATE_SYNC,
@@ -327,7 +327,7 @@ export const GoogleProvider = ({ children }) => {
     try {
       return await googleDriveService.uploadFile(
         file,
-        folderId || state.drive.folderId,
+        folderId || state.drive.folderId
       );
     } catch (error) {
       dispatch({ type: GOOGLE_ACTIONS.SET_ERROR, payload: error.message });
@@ -356,7 +356,7 @@ export const GoogleProvider = ({ children }) => {
   const listFiles = async (folderId = null) => {
     try {
       return await googleDriveService.listFiles(
-        folderId || state.drive.folderId,
+        folderId || state.drive.folderId
       );
     } catch (error) {
       dispatch({ type: GOOGLE_ACTIONS.SET_ERROR, payload: error.message });
@@ -369,7 +369,7 @@ export const GoogleProvider = ({ children }) => {
     try {
       return await googleAppsScriptService.runFunction(
         functionName,
-        parameters,
+        parameters
       );
     } catch (error) {
       dispatch({ type: GOOGLE_ACTIONS.SET_ERROR, payload: error.message });
@@ -379,7 +379,7 @@ export const GoogleProvider = ({ children }) => {
 
   const calculateDistance = async (origin, destination) => {
     try {
-      return await runScript("calculateDistance", [origin, destination]);
+      return await runScript('calculateDistance', [origin, destination]);
     } catch (error) {
       dispatch({ type: GOOGLE_ACTIONS.SET_ERROR, payload: error.message });
       throw error;
@@ -388,7 +388,7 @@ export const GoogleProvider = ({ children }) => {
 
   const optimizeRoute = async (waypoints) => {
     try {
-      return await runScript("optimizeRoute", [waypoints]);
+      return await runScript('optimizeRoute', [waypoints]);
     } catch (error) {
       dispatch({ type: GOOGLE_ACTIONS.SET_ERROR, payload: error.message });
       throw error;
@@ -397,7 +397,7 @@ export const GoogleProvider = ({ children }) => {
 
   const geocodeAddress = async (address) => {
     try {
-      return await runScript("geocodeAddress", [address]);
+      return await runScript('geocodeAddress', [address]);
     } catch (error) {
       dispatch({ type: GOOGLE_ACTIONS.SET_ERROR, payload: error.message });
       throw error;
@@ -473,7 +473,7 @@ export const GoogleProvider = ({ children }) => {
 export const useGoogle = () => {
   const context = useContext(GoogleContext);
   if (!context) {
-    throw new Error("useGoogle must be used within a GoogleProvider");
+    throw new Error('useGoogle must be used within a GoogleProvider');
   }
   return context;
 };

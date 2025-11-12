@@ -25,8 +25,13 @@ class GoogleSheetsService {
     }
 
     // Check if environment variables are configured
-    if (!process.env.REACT_APP_GOOGLE_API_KEY || !process.env.REACT_APP_GOOGLE_CLIENT_ID) {
-      console.warn('⚠️ Google API credentials not configured. Using mock mode.');
+    if (
+      !process.env.REACT_APP_GOOGLE_API_KEY ||
+      !process.env.REACT_APP_GOOGLE_CLIENT_ID
+    ) {
+      console.warn(
+        '⚠️ Google API credentials not configured. Using mock mode.'
+      );
       return Promise.resolve();
     }
 
@@ -38,7 +43,9 @@ class GoogleSheetsService {
           this.gapi = window.gapi;
           resolve();
         } else {
-          console.log('⚠️ Google API script loaded but gapi not available, using fallback mode');
+          console.log(
+            '⚠️ Google API script loaded but gapi not available, using fallback mode'
+          );
           resolve();
         }
         return;
@@ -51,7 +58,9 @@ class GoogleSheetsService {
 
       // Add timeout to prevent hanging
       const timeout = setTimeout(() => {
-        console.log('⏰ Google API script loading timeout, using fallback mode');
+        console.log(
+          '⏰ Google API script loading timeout, using fallback mode'
+        );
         resolve();
       }, 10000); // 10 seconds timeout
 
@@ -64,7 +73,9 @@ class GoogleSheetsService {
             await window.gapi.client.init({
               apiKey: process.env.REACT_APP_GOOGLE_API_KEY,
               clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-              discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+              discoveryDocs: [
+                'https://sheets.googleapis.com/$discovery/rest?version=v4',
+              ],
               scope: 'https://www.googleapis.com/auth/spreadsheets',
               ux_mode: 'popup',
               redirect_uri: window.location.origin,
@@ -75,9 +86,14 @@ class GoogleSheetsService {
           } catch (error) {
             // Only log specific errors, not all initialization failures
             if (error.error === 'idpiframe_initialization_failed') {
-              console.log('⚠️ Google API initialization failed - using fallback mode');
+              console.log(
+                '⚠️ Google API initialization failed - using fallback mode'
+              );
             } else {
-              console.error('❌ Google API client initialization failed:', error);
+              console.error(
+                '❌ Google API client initialization failed:',
+                error
+              );
             }
             console.log('💡 Using fallback mode');
             resolve();
@@ -88,7 +104,9 @@ class GoogleSheetsService {
       script.onerror = (error) => {
         clearTimeout(timeout);
         console.error('❌ Failed to load Google API script:', error);
-        console.log('💡 This is normal if Google API is not available. Using fallback mode.');
+        console.log(
+          '💡 This is normal if Google API is not available. Using fallback mode.'
+        );
         resolve();
       };
 
@@ -107,7 +125,10 @@ class GoogleSheetsService {
       try {
         await this.initializeAPI();
       } catch (error) {
-        console.warn('⚠️ Google API initialization failed, using fallback mode:', error.message);
+        console.warn(
+          '⚠️ Google API initialization failed, using fallback mode:',
+          error.message
+        );
         // Continue with fallback mode
       }
 
@@ -139,7 +160,9 @@ class GoogleSheetsService {
       this.isConnected = true;
 
       console.log(`📋 Connected to spreadsheet: ${this.spreadsheetTitle}`);
-      console.log(`📋 Available sheets: [${Object.keys(this.sheets).join(', ')}]`);
+      console.log(
+        `📋 Available sheets: [${Object.keys(this.sheets).join(', ')}]`
+      );
 
       return {
         title: this.spreadsheetTitle,
@@ -203,7 +226,9 @@ class GoogleSheetsService {
     };
 
     console.log(`📋 Fallback mode connected: ${this.spreadsheetTitle}`);
-    console.log(`📋 Available sheets: [${Object.keys(this.sheets).join(', ')}]`);
+    console.log(
+      `📋 Available sheets: [${Object.keys(this.sheets).join(', ')}]`
+    );
 
     return {
       title: this.spreadsheetTitle,
@@ -219,7 +244,9 @@ class GoogleSheetsService {
     try {
       // Try direct API call first
       if (process.env.REACT_APP_GOOGLE_API_KEY && this.spreadsheetId) {
-        console.log(`📊 Getting data directly from Google Sheets API: "${sheetName}"`);
+        console.log(
+          `📊 Getting data directly from Google Sheets API: "${sheetName}"`
+        );
         const apiKey = process.env.REACT_APP_GOOGLE_API_KEY;
         const rangeParam = range ? `${sheetName}!${range}` : `${sheetName}!A:Z`;
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${this.spreadsheetId}/values/${rangeParam}?key=${apiKey}`;
@@ -229,7 +256,9 @@ class GoogleSheetsService {
           if (response.ok) {
             const data = await response.json();
             if (data.values && data.values.length > 0) {
-              console.log(`✅ Successfully got data from Google Sheets: "${sheetName}"`);
+              console.log(
+                `✅ Successfully got data from Google Sheets: "${sheetName}"`
+              );
               return data.values;
             }
           }
@@ -431,36 +460,45 @@ class GoogleSheetsService {
         },
       ],
       Users: [
-        ['id', 'email', 'fullName', 'role', 'status', 'createdAt', 'updatedAt', 'passwordHash'],
+        [
+          'id',
+          'email',
+          'fullName',
+          'role',
+          'isActive',
+          'createdAt',
+          'updatedAt',
+          'passwordHash',
+        ],
         [
           '1',
-          'admin@company.com',
-          'Admin User',
+          'admin@mia.vn',
+          'MIA Admin',
           'admin',
-          'active',
+          'true',
           '2024-01-01',
           '2024-01-01',
-          'hashed_password_123',
+          '$2b$10$K8P5gYXqF2sZ9mH3wN7P8eYvQ4xR1tL6jU9sC2dA7bW3eF5gH8iJ0', // password: admin123
         ],
         [
           '2',
-          'manager@company.com',
-          'Manager User',
+          'manager@mia.vn',
+          'MIA Manager',
           'manager',
-          'active',
+          'true',
           '2024-01-01',
           '2024-01-01',
-          'hashed_password_456',
+          '$2b$10$L9Q6hZYrG3tA0nI4xO8Q9fZwR5yS2uM7kV0tD3eB8cX4fG6hI9jK1', // password: manager123
         ],
         [
           '3',
-          'user@company.com',
-          'Regular User',
+          'user@mia.vn',
+          'MIA User',
           'user',
-          'active',
+          'true',
           '2024-01-01',
           '2024-01-01',
-          'hashed_password_789',
+          '$2b$10$M0R7iAZsH4uB1oJ5yP9R0gAxS6zT3vN8lW1uE4fC9dY5gH7iJ0kL2', // password: user123
         ],
       ],
     };
@@ -485,14 +523,16 @@ class GoogleSheetsService {
       // Sử dụng Google Sheets API thực tế
       console.log(`📝 Updating values in Google Sheets: "${sheetName}"`);
 
-      const response = await this.gapi.client.sheets.spreadsheets.values.update({
-        spreadsheetId: this.spreadsheetId,
-        range: `${sheetName}!${range}`,
-        valueInputOption: 'RAW',
-        resource: {
-          values: values,
-        },
-      });
+      const response = await this.gapi.client.sheets.spreadsheets.values.update(
+        {
+          spreadsheetId: this.spreadsheetId,
+          range: `${sheetName}!${range}`,
+          valueInputOption: 'RAW',
+          resource: {
+            values: values,
+          },
+        }
+      );
 
       // Clear cache for this sheet
       this.clearCacheForSheet(sheetName);
@@ -519,15 +559,17 @@ class GoogleSheetsService {
 
       console.log(`➕ Appending data to Google Sheets: "${sheetName}"`);
 
-      const response = await this.gapi.client.sheets.spreadsheets.values.append({
-        spreadsheetId: this.spreadsheetId,
-        range: `${sheetName}!A:Z`,
-        valueInputOption: 'RAW',
-        insertDataOption: 'INSERT_ROWS',
-        resource: {
-          values: values,
-        },
-      });
+      const response = await this.gapi.client.sheets.spreadsheets.values.append(
+        {
+          spreadsheetId: this.spreadsheetId,
+          range: `${sheetName}!A:Z`,
+          valueInputOption: 'RAW',
+          insertDataOption: 'INSERT_ROWS',
+          resource: {
+            values: values,
+          },
+        }
+      );
 
       // Clear cache for this sheet
       this.clearCacheForSheet(sheetName);

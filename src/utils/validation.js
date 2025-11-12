@@ -1,5 +1,5 @@
 // Input Validation Utilities
-import DOMPurify from "dompurify";
+import DOMPurify from 'dompurify';
 
 // Sanitize HTML content
 export const sanitizeHtml = (html) => {
@@ -15,7 +15,7 @@ export const validateEmail = (email) => {
 // Validate phone number format
 export const validatePhone = (phone) => {
   const phoneRegex = /^[+]?[1-9][d]{0,15}$/;
-  return phoneRegex.test(phone.replace(/[ -()]/g, ""));
+  return phoneRegex.test(phone.replace(/[ -()]/g, ''));
 };
 
 // Validate Google Sheets ID format
@@ -38,16 +38,16 @@ export const validateGoogleMapsApiKey = (key) => {
 
 // Sanitize user input
 export const sanitizeInput = (input) => {
-  if (typeof input !== "string") {
+  if (typeof input !== 'string') {
     return input;
   }
 
   // Remove potentially dangerous characters
   return input
-    .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, "")
-    .replace(/<iframe\b[^>]*>([\s\S]*?)<\/iframe>/gi, "")
-    .replace(/javascript:/gi, "")
-    .replace(/on\w+\s*=/gi, "")
+    .replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, '')
+    .replace(/<iframe\b[^>]*>([\s\S]*?)<\/iframe>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+\s*=/gi, '')
     .trim();
 };
 
@@ -61,34 +61,34 @@ export const validateFormData = (formData, schema) => {
     const rules = schema[field];
 
     // Required validation
-    if (rules.required && (!value || value.trim() === "")) {
+    if (rules.required && (!value || value.trim() === '')) {
       errors[field] = `${field} is required`;
       return;
     }
 
     // Type validation
     if (value && rules.type) {
-      if (rules.type === "email" && !validateEmail(value)) {
+      if (rules.type === 'email' && !validateEmail(value)) {
         errors[field] = `${field} must be a valid email`;
         return;
       }
 
-      if (rules.type === "phone" && !validatePhone(value)) {
+      if (rules.type === 'phone' && !validatePhone(value)) {
         errors[field] = `${field} must be a valid phone number`;
         return;
       }
 
-      if (rules.type === "sheets_id" && !validateGoogleSheetsId(value)) {
+      if (rules.type === 'sheets_id' && !validateGoogleSheetsId(value)) {
         errors[field] = `${field} must be a valid Google Sheets ID`;
         return;
       }
 
-      if (rules.type === "script_id" && !validateGoogleAppsScriptId(value)) {
+      if (rules.type === 'script_id' && !validateGoogleAppsScriptId(value)) {
         errors[field] = `${field} must be a valid Google Apps Script ID`;
         return;
       }
 
-      if (rules.type === "api_key" && !validateGoogleMapsApiKey(value)) {
+      if (rules.type === 'api_key' && !validateGoogleMapsApiKey(value)) {
         errors[field] = `${field} must be a valid Google Maps API Key`;
         return;
       }
@@ -126,21 +126,21 @@ export const VALIDATION_SCHEMAS = {
   GOOGLE_CONFIG: {
     clientId: {
       required: true,
-      type: "email",
+      type: 'email',
       minLength: 10,
       maxLength: 100,
     },
     spreadsheetId: {
       required: true,
-      type: "sheets_id",
+      type: 'sheets_id',
     },
     appsScriptId: {
       required: true,
-      type: "script_id",
+      type: 'script_id',
     },
     mapsApiKey: {
       required: true,
-      type: "api_key",
+      type: 'api_key',
     },
   },
 
@@ -157,11 +157,11 @@ export const VALIDATION_SCHEMAS = {
     },
     email: {
       required: true,
-      type: "email",
+      type: 'email',
     },
     phone: {
       required: false,
-      type: "phone",
+      type: 'phone',
     },
   },
 };

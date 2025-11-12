@@ -6,7 +6,7 @@ export const PERFORMANCE_CONFIG = {
     QUALITY: 80,
     MAX_WIDTH: 1920,
     MAX_HEIGHT: 1080,
-    FORMATS: ["webp", "jpeg", "png"],
+    FORMATS: ['webp', 'jpeg', 'png'],
   },
 
   // Code splitting
@@ -18,22 +18,22 @@ export const PERFORMANCE_CONFIG = {
 
   // Caching
   CACHING: {
-    STATIC_ASSETS: "1y",
-    HTML_FILES: "0",
-    API_RESPONSES: "5m",
+    STATIC_ASSETS: '1y',
+    HTML_FILES: '0',
+    API_RESPONSES: '5m',
   },
 
   // Lazy loading
   LAZY_LOADING: {
     ENABLED: true,
     THRESHOLD: 0.1,
-    ROOT_MARGIN: "50px",
+    ROOT_MARGIN: '50px',
   },
 
   // Preloading
   PRELOADING: {
     ENABLED: true,
-    CRITICAL_ROUTES: ["/dashboard", "/transport", "/warehouse"],
+    CRITICAL_ROUTES: ['/dashboard', '/transport', '/warehouse'],
   },
 };
 
@@ -46,7 +46,7 @@ export const optimizeImage = (src, options = {}) => {
   } = options;
 
   // If using a CDN or image optimization service
-  if (src.includes("googleapis.com") || src.includes("gstatic.com")) {
+  if (src.includes('googleapis.com') || src.includes('gstatic.com')) {
     return `${src}?w=${width}&h=${height}&q=${quality}`;
   }
 
@@ -72,7 +72,7 @@ export const useLazyLoading = (ref, options = {}) => {
           options.threshold || PERFORMANCE_CONFIG.LAZY_LOADING.THRESHOLD,
         rootMargin:
           options.rootMargin || PERFORMANCE_CONFIG.LAZY_LOADING.ROOT_MARGIN,
-      },
+      }
     );
 
     observer.observe(ref.current);
@@ -93,8 +93,8 @@ export const measurePerformance = (name, fn) => {
 
       // Track performance metric
       if (window.gtag) {
-        window.gtag("event", "performance", {
-          event_category: "Performance",
+        window.gtag('event', 'performance', {
+          event_category: 'Performance',
           event_label: name,
           value: Math.round(end - start),
         });
@@ -106,8 +106,8 @@ export const measurePerformance = (name, fn) => {
 
       // Track error performance
       if (window.gtag) {
-        window.gtag("event", "performance_error", {
-          event_category: "Performance",
+        window.gtag('event', 'performance_error', {
+          event_category: 'Performance',
           event_label: name,
           value: Math.round(end - start),
         });
