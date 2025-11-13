@@ -21,9 +21,9 @@ test_endpoint() {
     local endpoint=$2
     local description=$3
     local data=$4
-    
+
     echo -n "Testing: $description ... "
-    
+
     if [ "$method" = "GET" ]; then
         response=$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL$endpoint")
     else
@@ -31,7 +31,7 @@ test_endpoint() {
             -H "Content-Type: application/json" \
             -d "$data")
     fi
-    
+
     if [ $response -eq 200 ] || [ $response -eq 201 ]; then
         echo -e "${GREEN}✅ PASS${NC} ($response)"
         ((PASSED++))
@@ -48,8 +48,45 @@ test_endpoint "GET" "/api/google-sheets-auth/status" "Google Sheets Status"
 
 echo ""
 echo "2️⃣  AUTHENTICATION (9 endpoints)"
-test_endpoint "POST" "/api/auth/login" "Login" '{"email":"admin@mia.vn","password":"password"}'
-test_endpoint "GET" "/api/auth/me" "Get Current User"
+# Test login và lưu user ID
+echo -n "Testing: Login ... "
+login_response=$(curl -s -X POST "$BASE_URL/api/auth/login" \
+    -H "Content-Type: application/json" \
+    -d '{"email":"admin@mia.vn","password":"admin123"}')
+login_status=$(echo "$login_response" | grep -o '"success":[^,]*' | cut -d: -f2 | tr -d ' ')
+if [ "$login_status" = "true" ]; then
+    echo -e "${GREEN}✅ PASS${NC} (200)"
+    ((PASSED++))
+    # Lưu user ID từ response
+    USER_ID=$(echo "$login_response" | grep -o '"id":"[^"]*' | cut -d'"' -f4)
+    if [ -n "$USER_ID" ]; then
+        export AUTH_USER_ID="$USER_ID"
+    fi
+else
+    http_code=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE_URL/api/auth/login" \
+        -H "Content-Type: application/json" \
+        -d '{"email":"admin@mia.vn","password":"admin123"}')
+    echo -e "${RED}❌ FAIL${NC} ($http_code)"
+    ((FAILED++))
+fi
+
+# Test get current user với user ID header
+echo -n "Testing: Get Current User ... "
+if [ -n "$AUTH_USER_ID" ]; then
+    response=$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/api/auth/me" \
+        -H "x-user-id: $AUTH_USER_ID")
+else
+    # Nếu không có user ID, vẫn test nhưng sẽ fail
+    response=$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/api/auth/me")
+fi
+if [ $response -eq 200 ]; then
+    echo -e "${GREEN}✅ PASS${NC} ($response)"
+    ((PASSED++))
+else
+    echo -e "${RED}❌ FAIL${NC} ($response)"
+    ((FAILED++))
+fi
+
 test_endpoint "GET" "/api/auth/users" "Get All Users"
 
 echo ""

@@ -4,11 +4,14 @@ class LogService {
   constructor() {
     this.logLevel = process.env.REACT_APP_LOG_LEVEL || 'info';
     this.logToConsole = process.env.REACT_APP_LOG_TO_CONSOLE !== 'false';
-    this.logToGoogleSheets = process.env.REACT_APP_LOG_TO_GOOGLE_SHEETS === 'true';
-    this.logToLocalStorage = process.env.REACT_APP_LOG_TO_LOCAL_STORAGE !== 'false';
+    this.logToGoogleSheets =
+      process.env.REACT_APP_LOG_TO_GOOGLE_SHEETS === 'true';
+    this.logToLocalStorage =
+      process.env.REACT_APP_LOG_TO_LOCAL_STORAGE !== 'false';
     this.localLogKey = 'mia-logs';
     this.maxLocalLogs = parseInt(process.env.REACT_APP_MAX_LOCAL_LOGS) || 1000;
-    this.logRetentionDays = parseInt(process.env.REACT_APP_LOG_RETENTION_DAYS) || 7;
+    this.logRetentionDays =
+      parseInt(process.env.REACT_APP_LOG_RETENTION_DAYS) || 7;
     this.batchSize = parseInt(process.env.REACT_APP_LOG_BATCH_SIZE) || 50;
 
     // Log levels
@@ -43,7 +46,7 @@ class LogService {
         skipGoogleSheets = false,
         tags = [],
         correlationId = null,
-        performance = false
+        performance = false,
       } = options;
 
       // Check if we should log this level
@@ -51,17 +54,17 @@ class LogService {
         return null;
       }
 
-    const logEntry = {
+      const logEntry = {
         id: this.generateLogId(),
-      timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString(),
         level: level.toUpperCase(),
         category: category.toUpperCase(),
         message,
         data: this.sanitizeData(data),
         tags: Array.isArray(tags) ? tags : [tags],
         correlationId,
-      userAgent: navigator.userAgent,
-      url: window.location.href,
+        userAgent: navigator.userAgent,
+        url: window.location.href,
         userId: this.getCurrentUserId(),
         sessionId: this.getCurrentSessionId(),
         appVersion: process.env.REACT_APP_VERSION || '1.0.0',
@@ -132,7 +135,11 @@ class LogService {
       consoleMessage += ` [${correlationId}]`;
     }
 
-    const logData = data ? (typeof data === 'string' ? JSON.parse(data) : data) : {};
+    const logData = data
+      ? typeof data === 'string'
+        ? JSON.parse(data)
+        : data
+      : {};
 
     switch (level) {
       case 'ERROR':
@@ -161,8 +168,12 @@ class LogService {
       const recentLogs = logs.slice(-this.maxLocalLogs);
 
       // Clean up old logs
-      const cutoffDate = new Date(Date.now() - (this.logRetentionDays * 24 * 60 * 60 * 1000));
-      const filteredLogs = recentLogs.filter(log => new Date(log.timestamp) > cutoffDate);
+      const cutoffDate = new Date(
+        Date.now() - this.logRetentionDays * 24 * 60 * 60 * 1000
+      );
+      const filteredLogs = recentLogs.filter(
+        (log) => new Date(log.timestamp) > cutoffDate
+      );
 
       localStorage.setItem(this.localLogKey, JSON.stringify(filteredLogs));
     } catch (error) {
@@ -274,7 +285,7 @@ class LogService {
         return;
       }
 
-      const rowsData = logEntries.map(logEntry => [
+      const rowsData = logEntries.map((logEntry) => [
         logEntry.timestamp,
         logEntry.level,
         logEntry.category,
@@ -335,7 +346,11 @@ class LogService {
 
         const result = {};
         for (const [key, value] of Object.entries(obj)) {
-          if (sensitiveKeys.some(sensitive => key.toLowerCase().includes(sensitive))) {
+          if (
+            sensitiveKeys.some((sensitive) =>
+              key.toLowerCase().includes(sensitive)
+            )
+          ) {
             result[key] = '[REDACTED]';
           } else {
             result[key] = sanitizeObject(value);
@@ -346,7 +361,10 @@ class LogService {
 
       return JSON.stringify(sanitizeObject(sanitized));
     } catch (error) {
-      return JSON.stringify({ error: 'Failed to sanitize data', originalError: error.message });
+      return JSON.stringify({
+        error: 'Failed to sanitize data',
+        originalError: error.message,
+      });
     }
   }
 
@@ -386,7 +404,10 @@ class LogService {
   trackPerformance(category, logEntry) {
     try {
       const key = `${category}_${logEntry.level}`;
-      const current = this.performanceMetrics.get(key) || { count: 0, totalTime: 0 };
+      const current = this.performanceMetrics.get(key) || {
+        count: 0,
+        totalTime: 0,
+      };
       current.count++;
       current.totalTime += Date.now() - this.startTime;
       this.performanceMetrics.set(key, current);
@@ -398,31 +419,32 @@ class LogService {
   // Log analysis utilities
   getLogsByCategory(category, hours = 24) {
     const logs = this.getLocalLogs();
-    const cutoff = new Date(Date.now() - (hours * 60 * 60 * 1000));
+    const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
 
-    return logs.filter(log =>
-      log.category === category.toUpperCase() &&
-      new Date(log.timestamp) > cutoff
+    return logs.filter(
+      (log) =>
+        log.category === category.toUpperCase() &&
+        new Date(log.timestamp) > cutoff
     );
   }
 
   getLogsByLevel(level, hours = 24) {
     const logs = this.getLocalLogs();
-    const cutoff = new Date(Date.now() - (hours * 60 * 60 * 1000));
+    const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
 
-    return logs.filter(log =>
-      log.level === level.toUpperCase() &&
-      new Date(log.timestamp) > cutoff
+    return logs.filter(
+      (log) =>
+        log.level === level.toUpperCase() && new Date(log.timestamp) > cutoff
     );
   }
 
   getLogsByTag(tag, hours = 24) {
     const logs = this.getLocalLogs();
-    const cutoff = new Date(Date.now() - (hours * 60 * 60 * 1000));
+    const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
 
-    return logs.filter(log =>
-      log.tags && log.tags.includes(tag) &&
-      new Date(log.timestamp) > cutoff
+    return logs.filter(
+      (log) =>
+        log.tags && log.tags.includes(tag) && new Date(log.timestamp) > cutoff
     );
   }
 
@@ -432,8 +454,8 @@ class LogService {
 
   getLogStats(hours = 24) {
     const logs = this.getLocalLogs();
-    const cutoff = new Date(Date.now() - (hours * 60 * 60 * 1000));
-    const recentLogs = logs.filter(log => new Date(log.timestamp) > cutoff);
+    const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
+    const recentLogs = logs.filter((log) => new Date(log.timestamp) > cutoff);
 
     const stats = {
       total: recentLogs.length,
@@ -446,16 +468,17 @@ class LogService {
       memoryUsage: this.getMemoryUsage(),
     };
 
-    recentLogs.forEach(log => {
+    recentLogs.forEach((log) => {
       // Count by level
       stats.byLevel[log.level] = (stats.byLevel[log.level] || 0) + 1;
 
       // Count by category
-      stats.byCategory[log.category] = (stats.byCategory[log.category] || 0) + 1;
+      stats.byCategory[log.category] =
+        (stats.byCategory[log.category] || 0) + 1;
 
       // Count by tags
       if (log.tags && log.tags.length > 0) {
-        log.tags.forEach(tag => {
+        log.tags.forEach((tag) => {
           stats.byTag[tag] = (stats.byTag[tag] || 0) + 1;
         });
       }
@@ -515,11 +538,16 @@ class LogService {
   }
 
   logPerformance(operation, duration, details = {}, options = {}) {
-    this.info('PERFORMANCE', `Operation ${operation} took ${duration}ms`, details, {
-      ...options,
-      tags: ['performance', 'timing', ...(options.tags || [])],
-      performance: true,
-    });
+    this.info(
+      'PERFORMANCE',
+      `Operation ${operation} took ${duration}ms`,
+      details,
+      {
+        ...options,
+        tags: ['performance', 'timing', ...(options.tags || [])],
+        performance: true,
+      }
+    );
   }
 
   logError(category, error, context = {}, options = {}) {
@@ -539,19 +567,21 @@ class LogService {
   // Export logs
   exportLogs(format = 'json', hours = 24, filters = {}) {
     let logs = this.getLocalLogs();
-    const cutoff = new Date(Date.now() - (hours * 60 * 60 * 1000));
-    logs = logs.filter(log => new Date(log.timestamp) > cutoff);
+    const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
+    logs = logs.filter((log) => new Date(log.timestamp) > cutoff);
 
     // Apply filters
     if (filters.level) {
-      logs = logs.filter(log => log.level === filters.level.toUpperCase());
+      logs = logs.filter((log) => log.level === filters.level.toUpperCase());
     }
     if (filters.category) {
-      logs = logs.filter(log => log.category === filters.category.toUpperCase());
+      logs = logs.filter(
+        (log) => log.category === filters.category.toUpperCase()
+      );
     }
     if (filters.tags && filters.tags.length > 0) {
-      logs = logs.filter(log =>
-        log.tags && filters.tags.some(tag => log.tags.includes(tag))
+      logs = logs.filter(
+        (log) => log.tags && filters.tags.some((tag) => log.tags.includes(tag))
       );
     }
 
@@ -564,12 +594,22 @@ class LogService {
 
   exportLogsAsCSV(logs) {
     const headers = [
-      'Timestamp', 'Level', 'Category', 'Message', 'Data', 'Tags',
-      'Correlation ID', 'User ID', 'Session ID', 'URL', 'App Version', 'Environment'
+      'Timestamp',
+      'Level',
+      'Category',
+      'Message',
+      'Data',
+      'Tags',
+      'Correlation ID',
+      'User ID',
+      'Session ID',
+      'URL',
+      'App Version',
+      'Environment',
     ];
     const csvRows = [headers.join(',')];
 
-    logs.forEach(log => {
+    logs.forEach((log) => {
       const row = [
         log.timestamp,
         log.level,
@@ -597,34 +637,54 @@ class LogService {
       const originalConsole = { ...console };
 
       console.log = (...args) => {
-        this.debug('CONSOLE', args.join(' '), {}, {
-          skipConsole: true,
-          tags: ['console', 'development'],
-        });
+        this.debug(
+          'CONSOLE',
+          args.join(' '),
+          {},
+          {
+            skipConsole: true,
+            tags: ['console', 'development'],
+          }
+        );
         originalConsole.log(...args);
       };
 
       console.error = (...args) => {
-        this.error('CONSOLE', args.join(' '), {}, {
-          skipConsole: true,
-          tags: ['console', 'development'],
-        });
+        this.error(
+          'CONSOLE',
+          args.join(' '),
+          {},
+          {
+            skipConsole: true,
+            tags: ['console', 'development'],
+          }
+        );
         originalConsole.error(...args);
       };
 
       console.warn = (...args) => {
-        this.warn('CONSOLE', args.join(' '), {}, {
-          skipConsole: true,
-          tags: ['console', 'development'],
-        });
+        this.warn(
+          'CONSOLE',
+          args.join(' '),
+          {},
+          {
+            skipConsole: true,
+            tags: ['console', 'development'],
+          }
+        );
         originalConsole.warn(...args);
       };
 
       console.debug = (...args) => {
-        this.debug('CONSOLE', args.join(' '), {}, {
-          skipConsole: true,
-          tags: ['console', 'development'],
-        });
+        this.debug(
+          'CONSOLE',
+          args.join(' '),
+          {},
+          {
+            skipConsole: true,
+            tags: ['console', 'development'],
+          }
+        );
         originalConsole.debug(...args);
       };
     }

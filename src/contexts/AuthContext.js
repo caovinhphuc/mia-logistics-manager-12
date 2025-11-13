@@ -150,17 +150,46 @@ export const AuthProvider = ({ children }) => {
       // Check for existing session
       const session = sessionService.getSession();
       if (session && sessionService.isValidSession(session)) {
-        const user = await googleAuthService.getCurrentUser();
-        if (user) {
-          const permissions = getPermissionsByRole(user.role);
+        // Restore user từ session trực tiếp (không cần gọi API)
+        // Điều này giúp session persist qua reload
+        if (session.user) {
+          const permissions = getPermissionsByRole(session.user.role);
           dispatch({
             type: AUTH_ACTIONS.LOGIN_SUCCESS,
-            payload: { user, permissions, sessionId: session.id },
+            payload: {
+              user: session.user,
+              permissions,
+              sessionId: session.id,
+            },
           });
 
           // Log successful session restore
-          logService.log("auth", "Session restored", { userId: user.id });
+          logService.log("auth", "Session restored", {
+            userId: session.user.id,
+          });
           return;
+        }
+
+        // Fallback: Thử lấy user từ Google Auth service (nếu có)
+        try {
+          const user = await googleAuthService.getCurrentUser();
+          if (user) {
+            const permissions = getPermissionsByRole(user.role);
+            dispatch({
+              type: AUTH_ACTIONS.LOGIN_SUCCESS,
+              payload: { user, permissions, sessionId: session.id },
+            });
+            logService.log("auth", "Session restored from Google Auth", {
+              userId: user.id,
+            });
+            return;
+          }
+        } catch (googleAuthError) {
+          // Google Auth không available - không sao, dùng session data
+          console.log(
+            "Google Auth not available, using session data:",
+            googleAuthError.message
+          );
         }
       }
 
@@ -169,6 +198,13 @@ export const AuthProvider = ({ children }) => {
       dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
     } catch (error) {
       console.error("Auth initialization error:", error);
+      // Không clear session nếu chỉ là lỗi nhỏ
+      // Chỉ clear nếu session thực sự invalid
+      const session = sessionService.getSession();
+      if (!session || !sessionService.isValidSession(session)) {
+        sessionService.clearSession();
+      }
+      dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
       dispatch({ type: AUTH_ACTIONS.SET_ERROR, payload: error.message });
     }
   };

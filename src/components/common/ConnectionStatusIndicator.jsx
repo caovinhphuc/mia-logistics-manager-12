@@ -178,16 +178,18 @@ const ConnectionStatusIndicator = ({ compact = false, showLabels = true }) => {
       </AnimatePresence>
 
       {/* CSS for rotating animation */}
-      <style jsx>{`
-        .rotating {
-          animation: rotate 1s linear infinite;
-        }
+      <style>
+        {`
+          .rotating {
+            animation: rotate 1s linear infinite;
+          }
 
-        @keyframes rotate {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
+          @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}
+      </style>
     </Box>
   );
 };

@@ -1308,41 +1308,43 @@
         }
       }
 
-      // Authenticate with Google Sheets
+      // Authenticate with Google Sheets (via backend API)
       async function authenticateWithGoogleSheets(email, password) {
         try {
-          // Get users from Google Sheets
-          const response = await fetch('/api/sheets/users', {
-            method: 'GET',
+          // Call backend login API
+          const response = await fetch('/api/auth/login', {
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
+            body: JSON.stringify({
+              email: email,
+              password: password,
+            }),
           });
 
           if (!response.ok) {
-            throw new Error('Không thể kết nối đến Google Sheets');
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Không thể kết nối đến server');
           }
 
-          const users = await response.json();
+          const result = await response.json();
 
-          // Find user by email
-          const user = users.find((u) => u.email === email);
-
-          if (!user) {
-            throw new Error('Email không tồn tại');
+          if (!result.success || !result.user) {
+            throw new Error(result.error || 'Đăng nhập thất bại');
           }
 
-          // Simple password check (in real app, use proper hashing)
-          if (user.password !== password) {
-            throw new Error('Mật khẩu không đúng');
-          }
+          // Backend returns user without password hash
+          const user = result.user;
 
-          // Generate token
+          // Generate token for frontend (backend doesn't return token yet)
+          // In production, backend should return JWT token
           const token = btoa(
             JSON.stringify({
+              id: user.id,
               email: user.email,
-              role: user.role,
-              name: user.name,
+              role: user.roleId || user.role,
+              name: user.fullName || user.name,
               timestamp: Date.now(),
             })
           );
@@ -1350,12 +1352,18 @@
           return {
             success: true,
             token: token,
-            user: user,
+            user: {
+              id: user.id,
+              email: user.email,
+              name: user.fullName || user.name,
+              role: user.roleId || user.role,
+              status: user.status,
+            },
           };
         } catch (error) {
           return {
             success: false,
-            message: error.message,
+            message: error.message || 'Đăng nhập thất bại',
           };
         }
       }

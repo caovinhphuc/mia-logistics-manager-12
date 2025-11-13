@@ -8,6 +8,11 @@ dist/
 .DS_Store
 *.log
 
+# Logs and uploads - có thể gây hot reload giật
+logs/
+uploads/
+*.log
+
 # Service Account Keys - Không commit secret keys
 **/service-account*.json
 **/*service-account*.json

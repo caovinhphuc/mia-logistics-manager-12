@@ -99,28 +99,44 @@ const LoginInfo = () => {
             <React.Fragment key={user.email}>
               <ListItem>
                 <ListItemIcon>{user.icon}</ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography variant="body1" fontWeight="medium">
-                        {user.name}
-                      </Typography>
-                      <Chip label={user.role} color={getRoleColor(user.role)} size="small" />
-                    </Box>
-                  }
-                  secondary={
-                    <Box>
-                      <Typography variant="body2" color="text.secondary">
-                        <Email sx={{ fontSize: 16, mr: 0.5, verticalAlign: 'middle' }} />
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                    <Typography variant="body1" fontWeight="medium" component="div">
+                      {user.name}
+                    </Typography>
+                    <Chip
+                      label={user.role}
+                      color={getRoleColor(user.role)}
+                      size="small"
+                    />
+                  </Box>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Email
+                        sx={{
+                          fontSize: 16,
+                          mr: 0.5,
+                          verticalAlign: 'middle',
+                        }}
+                      />
+                      <Typography variant="body2" color="text.secondary" component="span">
                         {user.email}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        <Lock sx={{ fontSize: 16, mr: 0.5, verticalAlign: 'middle' }} />
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Lock
+                        sx={{
+                          fontSize: 16,
+                          mr: 0.5,
+                          verticalAlign: 'middle',
+                        }}
+                      />
+                      <Typography variant="body2" color="text.secondary" component="span">
                         Mật khẩu: {user.password}
                       </Typography>
                     </Box>
-                  }
-                />
+                  </Box>
+                </Box>
               </ListItem>
               {index < mockUsers.length - 1 && <Divider />}
             </React.Fragment>

@@ -1,14 +1,40 @@
 import {
-  ArrowBack as ArrowBackIcon, BugReport as BugReportIcon, Chat as ChatIcon, ContactSupport as ContactSupportIcon, Description as DescriptionIcon,
-  Email as EmailIcon, Help as HelpIcon, Home as HomeIcon, KeyboardArrowRight as ArrowRightIcon, Phone as PhoneIcon, Refresh as RefreshIcon, Search as SearchIcon, Security as SecurityIcon, Speed as SpeedIcon, TrendingUp as TrendingUpIcon
+  ArrowBack as ArrowBackIcon,
+  BugReport as BugReportIcon,
+  Chat as ChatIcon,
+  ContactSupport as ContactSupportIcon,
+  Description as DescriptionIcon,
+  Email as EmailIcon,
+  Help as HelpIcon,
+  Home as HomeIcon,
+  KeyboardArrowRight as ArrowRightIcon,
+  Phone as PhoneIcon,
+  Refresh as RefreshIcon,
+  Search as SearchIcon,
+  Security as SecurityIcon,
+  Speed as SpeedIcon,
+  TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
 import {
   Alert,
-  AlertTitle, Avatar, Box, Button, Card,
-  CardContent, Container, Divider, Grid, LinearProgress, List,
+  AlertTitle,
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Divider,
+  Grid,
+  LinearProgress,
+  List,
   ListItem,
   ListItemIcon,
-  ListItemText, Paper, Typography, useMediaQuery, useTheme
+  ListItemText,
+  Paper,
+  Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
@@ -53,19 +79,49 @@ const NotFound = () => {
       transition: {
         duration: 3,
         repeat: Infinity,
-        ease: "easeInOut",
+        ease: 'easeInOut',
       },
     },
   };
 
   // Common navigation paths
   const commonPaths = [
-    { label: 'Trang chủ', path: '/dashboard', icon: <HomeIcon />, color: 'primary' },
-    { label: 'Quản lý vận chuyển', path: '/transport', icon: <SpeedIcon />, color: 'secondary' },
-    { label: 'Quản lý kho', path: '/warehouse', icon: <SecurityIcon />, color: 'info' },
-    { label: 'Quản lý nhân viên', path: '/staff', icon: <TrendingUpIcon />, color: 'success' },
-    { label: 'Quản lý đối tác', path: '/partners', icon: <DescriptionIcon />, color: 'warning' },
-    { label: 'Báo cáo', path: '/reports', icon: <TrendingUpIcon />, color: 'error' },
+    {
+      label: 'Trang chủ',
+      path: '/dashboard',
+      icon: <HomeIcon />,
+      color: 'primary',
+    },
+    {
+      label: 'Quản lý vận chuyển',
+      path: '/transport',
+      icon: <SpeedIcon />,
+      color: 'secondary',
+    },
+    {
+      label: 'Quản lý kho',
+      path: '/warehouse',
+      icon: <SecurityIcon />,
+      color: 'info',
+    },
+    {
+      label: 'Quản lý nhân viên',
+      path: '/staff',
+      icon: <TrendingUpIcon />,
+      color: 'success',
+    },
+    {
+      label: 'Quản lý đối tác',
+      path: '/partners',
+      icon: <DescriptionIcon />,
+      color: 'warning',
+    },
+    {
+      label: 'Báo cáo',
+      path: '/reports',
+      icon: <TrendingUpIcon />,
+      color: 'error',
+    },
   ];
 
   // Support contacts
@@ -245,14 +301,23 @@ const NotFound = () => {
               color="text.secondary"
               sx={{ mb: 4, maxWidth: 600, fontSize: '1.1rem' }}
             >
-              Xin lỗi, trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.
-              Vui lòng kiểm tra lại URL hoặc sử dụng các tùy chọn bên dưới.
+              Xin lỗi, trang bạn đang tìm kiếm không tồn tại hoặc đã được di
+              chuyển. Vui lòng kiểm tra lại URL hoặc sử dụng các tùy chọn bên
+              dưới.
             </Typography>
           </motion.div>
 
           {/* Action buttons */}
           <motion.div variants={itemVariants}>
-            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center', mb: 4 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                mb: 4,
+              }}
+            >
               <Button
                 variant="contained"
                 startIcon={<HomeIcon />}
@@ -299,11 +364,19 @@ const NotFound = () => {
           <motion.div variants={itemVariants}>
             <Card sx={{ mb: 4, maxWidth: 800, width: '100%' }}>
               <CardContent>
-                <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                >
                   <SearchIcon color="primary" />
                   Điều hướng nhanh
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 3 }}
+                >
                   Chọn một trong các trang phổ biến để tiếp tục:
                 </Typography>
 
@@ -353,7 +426,11 @@ const NotFound = () => {
               >
                 <Card sx={{ mb: 4, maxWidth: 600, width: '100%' }}>
                   <CardContent>
-                    <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography
+                      variant="h6"
+                      gutterBottom
+                      sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                    >
                       <HelpIcon color="info" />
                       Gợi ý khắc phục
                     </Typography>
@@ -377,11 +454,19 @@ const NotFound = () => {
           <motion.div variants={itemVariants}>
             <Card sx={{ maxWidth: 800, width: '100%' }}>
               <CardContent>
-                <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                >
                   <ContactSupportIcon color="primary" />
                   Cần hỗ trợ?
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 3 }}
+                >
                   Liên hệ với bộ phận hỗ trợ kỹ thuật nếu bạn cần trợ giúp:
                 </Typography>
 
@@ -404,7 +489,13 @@ const NotFound = () => {
                           }}
                           onClick={contact.action}
                         >
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 2,
+                            }}
+                          >
                             <Avatar sx={{ bgcolor: 'primary.main' }}>
                               {contact.icon}
                             </Avatar>
@@ -412,7 +503,10 @@ const NotFound = () => {
                               <Typography variant="body2" fontWeight="medium">
                                 {contact.label}
                               </Typography>
-                              <Typography variant="caption" color="text.secondary">
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                              >
                                 {contact.value}
                               </Typography>
                             </Box>
@@ -425,7 +519,14 @@ const NotFound = () => {
 
                 <Divider sx={{ my: 3 }} />
 
-                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 2,
+                    justifyContent: 'center',
+                    flexWrap: 'wrap',
+                  }}
+                >
                   <Button
                     variant="outlined"
                     startIcon={<BugReportIcon />}
@@ -460,18 +561,20 @@ const NotFound = () => {
       </motion.div>
 
       {/* Custom CSS for animations */}
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 0.5;
+      <style>
+        {`
+          @keyframes pulse {
+            0%, 100% {
+              transform: translate(-50%, -50%) scale(1);
+              opacity: 0.5;
+            }
+            50% {
+              transform: translate(-50%, -50%) scale(1.1);
+              opacity: 0.3;
+            }
           }
-          50% {
-            transform: translate(-50%, -50%) scale(1.1);
-            opacity: 0.3;
-          }
-        }
-      `}</style>
+        `}
+      </style>
     </Container>
   );
 };

@@ -95,83 +95,112 @@ class GoogleAuthService {
   // Đăng nhập thông thường (email/password)
   async login(email, password) {
     try {
+      console.log('🔐 ========================================');
       console.log('🔐 Bắt đầu quá trình đăng nhập...');
+      console.log('🔐 Email:', email);
+      console.log(
+        '🔐 REACT_APP_USE_MOCK_DATA:',
+        process.env.REACT_APP_USE_MOCK_DATA
+      );
+      console.log('🔐 NODE_ENV:', process.env.NODE_ENV);
 
-      // Import userService dynamically to avoid circular dependency
-      const { userService } = await import('../user/userService');
+      // Ưu tiên: Gọi backend API để login (dữ liệu thật từ Google Sheets)
+      try {
+        console.log('🔐 [STEP 1] Đang import authService...');
+        let authService;
+        try {
+          const authModule = await import('../api/authService');
+          authService = authModule.authService || authModule.default;
+          console.log('🔐 [STEP 1.1] Import thành công:', {
+            hasAuthService: !!authService,
+            hasDefault: !!authModule.default,
+            hasNamed: !!authModule.authService,
+            moduleKeys: Object.keys(authModule),
+          });
+        } catch (importError) {
+          console.error('❌ [STEP 1] Import authService failed:', importError);
+          throw importError;
+        }
 
-      // Tìm user trong database
-      const user = await userService.getUserByEmail(email);
+        if (!authService) {
+          throw new Error('authService không được export đúng cách');
+        }
 
-      if (!user) {
-        throw new Error('Không tìm thấy người dùng với email này');
+        console.log('🔐 [STEP 2] authService imported:', !!authService);
+        console.log('🔐 [STEP 3] Gọi POST /api/auth/login với:', {
+          email,
+          password: '***',
+        });
+        const result = await authService.login(email, password);
+        console.log('🔐 [STEP 4] Backend API response received:', {
+          success: result.success,
+          hasUser: !!result.user,
+          error: result.error,
+        });
+
+        console.log('📡 Backend API response:', {
+          success: result.success,
+          hasUser: !!result.user,
+          error: result.error,
+        });
+
+        if (result.success && result.user) {
+          console.log('🔐 [STEP 5] Mapping user data...');
+          // Map backend user data sang format frontend cần
+          const sessionUser = {
+            id: result.user.id,
+            email: result.user.email,
+            name: result.user.fullName || result.user.name,
+            role: result.user.roleId || result.user.role || 'user',
+            picture: result.user.avatarUrl || result.user.avatar_url || '',
+            loginMethod: 'email',
+            lastLogin:
+              result.user.lastLogin ||
+              result.user.last_login ||
+              new Date().toISOString(),
+            isActive:
+              result.user.status === 'active' || result.user.isActive !== false,
+          };
+
+          this.currentUser = sessionUser;
+          console.log(
+            '✅ Đăng nhập thành công qua backend API:',
+            sessionUser.email
+          );
+          console.log('🔐 ========================================');
+          return sessionUser;
+        } else {
+          // API trả về error - không fallback, throw error ngay
+          const errorMsg = result.error || 'Đăng nhập thất bại';
+          console.error('❌ [STEP 6] Backend API trả về lỗi:', errorMsg);
+          console.log('🔐 ========================================');
+          throw new Error(errorMsg);
+        }
+      } catch (apiError) {
+        // Log chi tiết lỗi
+        console.error('❌ [ERROR] Backend API call failed:', {
+          message: apiError.message,
+          response: apiError.response?.data,
+          status: apiError.response?.status,
+          code: apiError.code,
+          stack: apiError.stack,
+        });
+
+        // KHÔNG fallback về mock data hoặc Google Sheets trực tiếp
+        // Chỉ dùng backend API - nếu fail thì throw error
+        const errorMessage =
+          apiError.response?.data?.error ||
+          apiError.message ||
+          'Không thể kết nối đến server. Vui lòng thử lại sau.';
+        console.error('❌ Backend API không available:', errorMessage);
+        console.error(
+          '❌ Không fallback về mock data hoặc Google Sheets trực tiếp'
+        );
+        console.error(
+          '❌ Vui lòng đảm bảo backend đang chạy và proxy hoạt động đúng'
+        );
+        throw new Error(errorMessage);
       }
-
-      // Kiểm tra trạng thái tài khoản
-      if (!user.isActive) {
-        throw new Error('Tài khoản đã bị vô hiệu hóa');
-      }
-
-      // Validate password
-      // Note: Password verification in frontend is for demo only
-      // In production, this should be done on backend API
-      let isValidPassword = false;
-
-      // Known test password hashes for demo (from Google Sheets)
-      const knownHashes = {
-        // Real hash from Google Sheets for admin@mia.vn
-        $2a$10$45i8cCqfOXNZ13EF3GmjyeTXB4viHyBosUgeGky3vdLgbBZDxQp22:
-          'admin123',
-        // Mock data hash (password: "password")
-        '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi':
-          'password',
-        // Fallback hashes for other test accounts
-        $2b$10$L9Q6hZYrG3tA0nI4xO8Q9fZwR5yS2uM7kV0tD3eB8cX4fG6hI9jK1:
-          'manager123',
-        $2b$10$M0R7iAZsH4uB1oJ5yP9R0gAxS6zT3vN8lW1uE4fC9dY5gH7iJ0kL2: 'user123',
-        $2a$10$testpasswordhash: 'test123',
-      };
-
-      console.log('🔐 Password check:', {
-        email: user.email,
-        enteredPassword: password,
-        storedHash: user.passwordHash,
-        expectedPassword: knownHashes[user.passwordHash],
-        hashExists: !!knownHashes[user.passwordHash],
-      });
-
-      // Check if hash matches known password
-      if (knownHashes[user.passwordHash] === password) {
-        isValidPassword = true;
-      } else if (password === user.passwordHash) {
-        // Direct match for testing
-        isValidPassword = true;
-      }
-
-      if (!isValidPassword) {
-        throw new Error('Mật khẩu không đúng');
-      }
-
-      // Cập nhật thông tin đăng nhập
-      const loginTime = new Date().toISOString();
-      await userService.updateLastLogin(user.id);
-
-      // Tạo user object cho session
-      const sessionUser = {
-        id: user.id,
-        email: user.email,
-        name: user.fullName,
-        role: user.role || 'user',
-        picture: user.avatarUrl,
-        loginMethod: 'email',
-        lastLogin: loginTime,
-        isActive: user.isActive,
-      };
-
-      this.currentUser = sessionUser;
-      console.log('✅ Đăng nhập thành công:', sessionUser.email);
-
-      return sessionUser;
     } catch (error) {
       console.error('❌ Lỗi đăng nhập:', error);
       throw error;

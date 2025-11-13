@@ -150,7 +150,27 @@ export class UserService {
   async getUserByEmail(email) {
     try {
       const users = await this.getUsers();
-      return users.find((user) => user.email === email);
+      console.log(`🔍 Tìm user với email: ${email}`);
+      console.log(`📊 Tổng số users: ${users.length}`);
+      console.log(
+        `📋 Danh sách emails:`,
+        users.map((u) => u.email)
+      );
+
+      // Case-insensitive comparison
+      const user = users.find(
+        (user) =>
+          String(user.email || '').toLowerCase() ===
+          String(email || '').toLowerCase()
+      );
+
+      if (user) {
+        console.log(`✅ Tìm thấy user: ${user.email}`);
+      } else {
+        console.log(`❌ Không tìm thấy user với email: ${email}`);
+      }
+
+      return user;
     } catch (error) {
       console.error('❌ Lỗi lấy user theo email:', error);
       throw error;
@@ -165,7 +185,7 @@ export class UserService {
         username: 'admin',
         email: 'admin@mia.vn',
         password_hash:
-          '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: "password"
+          '$2a$10$45i8cCqfOXNZ13EF3GmjyeTXB4viHyBosUgeGky3vdLgbBZDxQp22', // password: "admin123" (match với backend)
         full_name: 'Administrator',
         phone: '0123456789',
         avatar_url: '',
