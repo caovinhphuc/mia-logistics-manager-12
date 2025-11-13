@@ -7,3 +7,14 @@ build/
 dist/
 .DS_Store
 *.log
+
+# Service Account Keys - Không commit secret keys
+**/service-account*.json
+**/*service-account*.json
+**/*mia-logistics*.json
+**/*sinuous-aviary*.json
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!tsconfig.*.json

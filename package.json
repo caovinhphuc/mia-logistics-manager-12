@@ -134,7 +134,8 @@
     "prettier": "^3.6.2",
     "serve": "^14.2.1",
     "typescript": "^3.2.1",
-    "webpack-bundle-analyzer": "^4.10.1"
+    "webpack-bundle-analyzer": "^4.10.1",
+    "webpack-cli": "^6.0.1"
   },
   "browserslist": {
     "production": [
