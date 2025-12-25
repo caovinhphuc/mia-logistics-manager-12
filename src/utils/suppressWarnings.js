@@ -72,7 +72,7 @@ console.log = function (...args) {
   originalConsoleLog.apply(console, args);
 };
 
-// Suppress Google API error messages
+// Suppress Google API error messages and backend connection errors
 const originalConsoleError = console.error;
 console.error = function (...args) {
   const message = args.join(' ');
@@ -102,6 +102,21 @@ console.error = function (...args) {
     message.includes('callback')
   ) {
     return; // Don't log these Google API errors
+  }
+
+  // Suppress backend connection errors when backend is not running
+  if (
+    message.includes('ERR_CONNECTION_REFUSED') ||
+    message.includes('net::ERR_CONNECTION_REFUSED') ||
+    message.includes('WebSocket connection to') ||
+    message.includes('ws://localhost:3000/ws') ||
+    message.includes('ws://localhost:5050/ws') ||
+    (message.includes('/api/health') &&
+      message.includes('ERR_CONNECTION_REFUSED')) ||
+    (message.includes('/favicon.ico') &&
+      message.includes('ERR_CONNECTION_REFUSED'))
+  ) {
+    return; // Don't log these errors when backend is not running
   }
 
   // Log other errors normally
@@ -177,6 +192,16 @@ window.addEventListener('unhandledrejection', (event) => {
 
   // Suppress Google API related promise rejections
   if (message.includes('gapi') || message.includes('Google API')) {
+    event.preventDefault();
+    return false;
+  }
+
+  // Suppress WebSocket connection rejections when backend is not running
+  if (
+    message.includes('WebSocket') ||
+    message.includes('ws://') ||
+    message.includes('ERR_CONNECTION_REFUSED')
+  ) {
     event.preventDefault();
     return false;
   }

@@ -6,6 +6,7 @@ class GoogleAuthService {
     this.isInitialized = false;
     this.authInstance = null;
     this.currentUser = null;
+    this.hasWarnedAboutCredentials = false; // Flag to prevent repeated warnings
   }
 
   // Khởi tạo Google Auth

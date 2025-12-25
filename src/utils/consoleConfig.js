@@ -113,11 +113,55 @@ const suppressWebpackWarnings = () => {
   };
 };
 
+// Suppress backend connection errors when backend is not running
+const suppressBackendConnectionErrors = () => {
+  const originalConsoleError = console.error;
+  const originalConsoleWarn = console.warn;
+
+  // Suppress connection errors
+  console.error = function (...args) {
+    const message = args.join(' ');
+
+    // Suppress backend connection errors
+    if (
+      message.includes('ERR_CONNECTION_REFUSED') ||
+      message.includes('net::ERR_CONNECTION_REFUSED') ||
+      message.includes('WebSocket connection to') ||
+      message.includes('ws://localhost:3000/ws') ||
+      message.includes('ws://localhost:5050/ws') ||
+      message.includes('/api/health') ||
+      message.includes('/favicon.ico')
+    ) {
+      return; // Don't log these errors when backend is not running
+    }
+
+    originalConsoleError.apply(console, args);
+  };
+
+  // Suppress WebSocket warnings
+  console.warn = function (...args) {
+    const message = args.join(' ');
+
+    // Suppress WebSocket connection warnings
+    if (
+      message.includes('WebSocket connection to') ||
+      message.includes('ws://localhost:3000/ws') ||
+      message.includes('ws://localhost:5050/ws') ||
+      message.includes('failed:')
+    ) {
+      return; // Don't log these warnings when backend is not running
+    }
+
+    originalConsoleWarn.apply(console, args);
+  };
+};
+
 // Initialize all warning suppressions
 const initializeWarningSuppression = () => {
   suppressGoogleAPIWarnings();
   suppressReactWarnings();
   suppressWebpackWarnings();
+  suppressBackendConnectionErrors();
 
   console.log('🔇 Console warnings suppression initialized');
 };

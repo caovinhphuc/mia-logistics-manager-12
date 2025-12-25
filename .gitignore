@@ -23,3 +23,4 @@ uploads/
 !package-lock.json
 !tsconfig.json
 !tsconfig.*.json
+.vercel

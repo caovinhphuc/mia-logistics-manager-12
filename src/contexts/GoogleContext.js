@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useReducer } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+} from 'react';
 import { googleAppsScriptService } from '../services/google/googleAppsScriptService';
 import { googleDriveService } from '../services/google/googleDriveService';
 import { googleSheetsService } from '../services/google/googleSheetsService';
@@ -118,11 +124,18 @@ const GoogleContext = createContext();
 // Google provider component
 export const GoogleProvider = ({ children }) => {
   const [state, dispatch] = useReducer(googleReducer, initialState);
+  const isInitializing = useRef(false);
 
   // Initialize Google services on mount
   useEffect(() => {
+    // Prevent double initialization in React Strict Mode
+    if (isInitializing.current || state.isInitialized) {
+      return;
+    }
+    isInitializing.current = true;
     initializeGoogleServices();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount
 
   const initializeGoogleServices = async () => {
     try {

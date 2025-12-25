@@ -1,16 +1,64 @@
 import {
-  AccountCircle, Assessment as ReportsIcon, Brightness4,
-  Brightness7, Business as PartnersIcon, Dashboard as DashboardIcon, ExpandLess,
-  ExpandMore, Help as HelpIcon, Home as HomeIcon, KeyboardArrowRight as ArrowRightIcon, LocalShipping as TransportIcon, Logout, Map as MapIcon, Menu as MenuIcon, Notifications as NotificationsIcon, People as StaffIcon, Search as SearchIcon, Settings as SettingsIcon, Speed as SpeedIcon, Warehouse as WarehouseIcon
+  AccountCircle,
+  Assessment as ReportsIcon,
+  Brightness4,
+  Brightness7,
+  Business as PartnersIcon,
+  Dashboard as DashboardIcon,
+  ExpandLess,
+  ExpandMore,
+  Help as HelpIcon,
+  Home as HomeIcon,
+  KeyboardArrowRight as ArrowRightIcon,
+  LocalShipping as TransportIcon,
+  Logout,
+  Map as MapIcon,
+  Menu as MenuIcon,
+  Notifications as NotificationsIcon,
+  People as StaffIcon,
+  Search as SearchIcon,
+  Settings as SettingsIcon,
+  Speed as SpeedIcon,
+  Warehouse as WarehouseIcon,
 } from '@mui/icons-material';
 import {
   Alert,
-  AlertTitle, AppBar, Avatar, Backdrop, Badge, Box, Breadcrumbs, Button, Card,
-  CardContent, CircularProgress, Collapse, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Drawer, Fab, Grid, IconButton, LinearProgress, Link, List, ListItem,
+  AlertTitle,
+  AppBar,
+  Avatar,
+  Backdrop,
+  Badge,
+  Box,
+  Breadcrumbs,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Collapse,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Drawer,
+  Fab,
+  Grid,
+  IconButton,
+  LinearProgress,
+  Link,
+  List,
+  ListItem,
   ListItemButton,
   ListItemIcon,
-  ListItemText, Menu,
-  MenuItem, Toolbar, Tooltip, Typography, useMediaQuery, useTheme, Zoom
+  ListItemText,
+  Menu,
+  MenuItem,
+  Toolbar,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+  useTheme,
+  Zoom,
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import React, { useEffect, useState } from 'react';
@@ -38,9 +86,21 @@ const menuItems = [
     roles: ['admin', 'manager', 'operator'],
     color: 'secondary',
     children: [
-      { text: 'requests', path: '/transport/requests', roles: ['admin', 'manager', 'operator'] },
-      { text: 'routes', path: '/transport/routes', roles: ['admin', 'manager'] },
-      { text: 'vehicles', path: '/transport/vehicles', roles: ['admin', 'manager'] },
+      {
+        text: 'requests',
+        path: '/transport/requests',
+        roles: ['admin', 'manager', 'operator'],
+      },
+      {
+        text: 'routes',
+        path: '/transport/routes',
+        roles: ['admin', 'manager'],
+      },
+      {
+        text: 'vehicles',
+        path: '/transport/vehicles',
+        roles: ['admin', 'manager'],
+      },
     ],
   },
   {
@@ -50,9 +110,21 @@ const menuItems = [
     roles: ['admin', 'manager', 'warehouse_staff'],
     color: 'info',
     children: [
-      { text: 'inventory', path: '/warehouse/inventory', roles: ['admin', 'manager', 'warehouse_staff'] },
-      { text: 'orders', path: '/warehouse/orders', roles: ['admin', 'manager'] },
-      { text: 'locations', path: '/warehouse/locations', roles: ['admin', 'manager'] },
+      {
+        text: 'inventory',
+        path: '/warehouse/inventory',
+        roles: ['admin', 'manager', 'warehouse_staff'],
+      },
+      {
+        text: 'orders',
+        path: '/warehouse/orders',
+        roles: ['admin', 'manager'],
+      },
+      {
+        text: 'locations',
+        path: '/warehouse/locations',
+        roles: ['admin', 'manager'],
+      },
     ],
   },
   {
@@ -62,9 +134,21 @@ const menuItems = [
     roles: ['admin', 'manager'],
     color: 'success',
     children: [
-      { text: 'employees', path: '/staff/employees', roles: ['admin', 'manager'] },
-      { text: 'schedules', path: '/staff/schedules', roles: ['admin', 'manager'] },
-      { text: 'performance', path: '/staff/performance', roles: ['admin', 'manager'] },
+      {
+        text: 'employees',
+        path: '/staff/employees',
+        roles: ['admin', 'manager'],
+      },
+      {
+        text: 'schedules',
+        path: '/staff/schedules',
+        roles: ['admin', 'manager'],
+      },
+      {
+        text: 'performance',
+        path: '/staff/performance',
+        roles: ['admin', 'manager'],
+      },
     ],
   },
   {
@@ -74,9 +158,21 @@ const menuItems = [
     roles: ['admin', 'manager', 'operator'],
     color: 'warning',
     children: [
-      { text: 'suppliers', path: '/partners/suppliers', roles: ['admin', 'manager'] },
-      { text: 'customers', path: '/partners/customers', roles: ['admin', 'manager', 'operator'] },
-      { text: 'contracts', path: '/partners/contracts', roles: ['admin', 'manager'] },
+      {
+        text: 'suppliers',
+        path: '/partners/suppliers',
+        roles: ['admin', 'manager'],
+      },
+      {
+        text: 'customers',
+        path: '/partners/customers',
+        roles: ['admin', 'manager', 'operator'],
+      },
+      {
+        text: 'contracts',
+        path: '/partners/contracts',
+        roles: ['admin', 'manager'],
+      },
     ],
   },
   {
@@ -93,9 +189,21 @@ const menuItems = [
     roles: ['admin', 'manager'],
     color: 'primary',
     children: [
-      { text: 'analytics', path: '/reports/analytics', roles: ['admin', 'manager'] },
-      { text: 'financial', path: '/reports/financial', roles: ['admin', 'manager'] },
-      { text: 'performance', path: '/reports/performance', roles: ['admin', 'manager'] },
+      {
+        text: 'analytics',
+        path: '/reports/analytics',
+        roles: ['admin', 'manager'],
+      },
+      {
+        text: 'financial',
+        path: '/reports/financial',
+        roles: ['admin', 'manager'],
+      },
+      {
+        text: 'performance',
+        path: '/reports/performance',
+        roles: ['admin', 'manager'],
+      },
     ],
   },
 ];
@@ -134,10 +242,22 @@ const MainLayout = ({ children }) => {
 
   // Quick actions
   const quickActions = [
-    { label: 'Tạo đơn vận chuyển', icon: <TransportIcon />, path: '/transport/new' },
-    { label: 'Thêm hàng tồn kho', icon: <WarehouseIcon />, path: '/warehouse/add' },
+    {
+      label: 'Tạo đơn vận chuyển',
+      icon: <TransportIcon />,
+      path: '/transport/new',
+    },
+    {
+      label: 'Thêm hàng tồn kho',
+      icon: <WarehouseIcon />,
+      path: '/warehouse/add',
+    },
     { label: 'Báo cáo nhanh', icon: <ReportsIcon />, path: '/reports/quick' },
-    { label: 'Tìm kiếm', icon: <SearchIcon />, action: () => setSearchOpen(true) },
+    {
+      label: 'Tìm kiếm',
+      icon: <SearchIcon />,
+      action: () => setSearchOpen(true),
+    },
   ];
 
   // System status
@@ -194,9 +314,9 @@ const MainLayout = ({ children }) => {
   };
 
   const handleExpandItem = (itemText) => {
-    setExpandedItems(prev => ({
+    setExpandedItems((prev) => ({
       ...prev,
-      [itemText]: !prev[itemText]
+      [itemText]: !prev[itemText],
     }));
   };
 
@@ -210,8 +330,13 @@ const MainLayout = ({ children }) => {
   };
 
   const renderMenuItem = (item, level = 0) => {
+    // Validate item
+    if (!item || !item.text || !item.path) {
+      return null;
+    }
+
     const isActive = location.pathname.startsWith(item.path);
-    const hasAccess = item.roles.some(role => hasRole(role));
+    const hasAccess = item.roles.some((role) => hasRole(role));
     const isExpanded = expandedItems[item.text];
 
     if (!hasAccess) return null;
@@ -255,12 +380,18 @@ const MainLayout = ({ children }) => {
               },
             }}
           >
-            <ListItemIcon sx={{ minWidth: 0, mr: 3 }}>
-              {item.icon}
-            </ListItemIcon>
+            <ListItemIcon sx={{ minWidth: 0, mr: 3 }}>{item.icon}</ListItemIcon>
             {!collapsed && (
               <>
-                <ListItemText primary={t(`navigation.${item.text}`)} />
+                <ListItemText
+                  primary={
+                    item.text
+                      ? t(`navigation.${item.text}`, {
+                          defaultValue: item.text,
+                        })
+                      : ''
+                  }
+                />
                 {hasChildren && (isExpanded ? <ExpandLess /> : <ExpandMore />)}
               </>
             )}
@@ -270,7 +401,9 @@ const MainLayout = ({ children }) => {
         {hasChildren && !collapsed && (
           <Collapse in={isExpanded} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
-              {item.children.map((child) => renderMenuItem(child, level + 1))}
+              {item.children
+                .filter((child) => child && child.text)
+                .map((child) => renderMenuItem(child, level + 1))}
             </List>
           </Collapse>
         )}
@@ -340,9 +473,7 @@ const MainLayout = ({ children }) => {
 
       {/* Navigation */}
       <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-        <List>
-          {menuItems.map((item) => renderMenuItem(item))}
-        </List>
+        <List>{menuItems.map((item) => renderMenuItem(item))}</List>
       </Box>
 
       {/* Footer */}
@@ -376,16 +507,31 @@ const MainLayout = ({ children }) => {
 
   const currentPath = location.pathname;
   const pathSegments = currentPath.split('/').filter(Boolean);
-  const breadcrumbs = pathSegments.map((segment, index) => ({
-    label: t(`navigation.${segment}`) || segment,
-    path: '/' + pathSegments.slice(0, index + 1).join('/'),
-  }));
+  const breadcrumbs = pathSegments
+    .map((segment, index) => {
+      if (!segment) return null;
+      const translationKey = `navigation.${segment}`;
+      const translated = t(translationKey, { defaultValue: segment });
+      return {
+        label: translated !== translationKey ? translated : segment,
+        path: '/' + pathSegments.slice(0, index + 1).join('/'),
+      };
+    })
+    .filter(Boolean);
 
   return (
     <Box sx={{ display: 'flex' }}>
       {/* Loading indicator */}
       {loading && (
-        <Box sx={{ width: '100%', position: 'fixed', top: 0, left: 0, zIndex: 9999 }}>
+        <Box
+          sx={{
+            width: '100%',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            zIndex: 9999,
+          }}
+        >
           <LinearProgress />
         </Box>
       )}
@@ -394,7 +540,9 @@ const MainLayout = ({ children }) => {
       <AppBar
         position="fixed"
         sx={{
-          width: { md: `calc(100% - ${collapsed ? drawerWidthCollapsed : drawerWidth}px)` },
+          width: {
+            md: `calc(100% - ${collapsed ? drawerWidthCollapsed : drawerWidth}px)`,
+          },
           ml: { md: `${collapsed ? drawerWidthCollapsed : drawerWidth}px` },
           transition: theme.transitions.create(['width', 'margin'], {
             easing: theme.transitions.easing.sharp,
@@ -421,7 +569,12 @@ const MainLayout = ({ children }) => {
               color="inherit"
               underline="hover"
               onClick={() => handleNavigation('/dashboard')}
-              sx={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 0.5 }}
+              sx={{
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+              }}
             >
               <HomeIcon fontSize="small" />
               Trang chủ
@@ -451,7 +604,10 @@ const MainLayout = ({ children }) => {
 
           {/* Notifications */}
           <Tooltip title="Thông báo">
-            <IconButton color="inherit" onClick={() => handleNavigation('/notifications')}>
+            <IconButton
+              color="inherit"
+              onClick={() => handleNavigation('/notifications')}
+            >
               <Badge badgeContent={unreadCount} color="error">
                 <NotificationsIcon />
               </Badge>
@@ -479,7 +635,13 @@ const MainLayout = ({ children }) => {
       </AppBar>
 
       {/* Drawer */}
-      <Box component="nav" sx={{ width: { md: collapsed ? drawerWidthCollapsed : drawerWidth }, flexShrink: { md: 0 } }}>
+      <Box
+        component="nav"
+        sx={{
+          width: { md: collapsed ? drawerWidthCollapsed : drawerWidth },
+          flexShrink: { md: 0 },
+        }}
+      >
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -487,7 +649,10 @@ const MainLayout = ({ children }) => {
           ModalProps={{ keepMounted: true }}
           sx={{
             display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': {
+              boxSizing: 'border-box',
+              width: drawerWidth,
+            },
           }}
         >
           {drawer}
@@ -517,7 +682,9 @@ const MainLayout = ({ children }) => {
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { md: `calc(100% - ${collapsed ? drawerWidthCollapsed : drawerWidth}px)` },
+          width: {
+            md: `calc(100% - ${collapsed ? drawerWidthCollapsed : drawerWidth}px)`,
+          },
           minHeight: '100vh',
           bgcolor: 'background.default',
           transition: theme.transitions.create(['width', 'margin'], {
@@ -538,17 +705,33 @@ const MainLayout = ({ children }) => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={() => { handleUserMenuClose(); handleNavigation('/profile'); }}>
-          <ListItemIcon><AccountCircle fontSize="small" /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            handleUserMenuClose();
+            handleNavigation('/profile');
+          }}
+        >
+          <ListItemIcon>
+            <AccountCircle fontSize="small" />
+          </ListItemIcon>
           <ListItemText primary="Hồ sơ cá nhân" />
         </MenuItem>
-        <MenuItem onClick={() => { handleUserMenuClose(); handleNavigation('/settings'); }}>
-          <ListItemIcon><SettingsIcon fontSize="small" /></ListItemIcon>
+        <MenuItem
+          onClick={() => {
+            handleUserMenuClose();
+            handleNavigation('/settings');
+          }}
+        >
+          <ListItemIcon>
+            <SettingsIcon fontSize="small" />
+          </ListItemIcon>
           <ListItemText primary="Cài đặt" />
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleLogout}>
-          <ListItemIcon><Logout fontSize="small" /></ListItemIcon>
+          <ListItemIcon>
+            <Logout fontSize="small" />
+          </ListItemIcon>
           <ListItemText primary="Đăng xuất" />
         </MenuItem>
       </Menu>

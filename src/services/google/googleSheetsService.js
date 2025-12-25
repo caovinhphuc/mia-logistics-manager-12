@@ -9,6 +9,8 @@ class GoogleSheetsService {
     this.sheets = {};
     this.cache = new Map();
     this.cacheTimeout = 5 * 60 * 1000; // 5 minutes
+    this.hasWarnedAboutCredentials = false; // Flag to prevent repeated warnings
+    this.hasWarnedAboutFallback = false; // Flag to prevent repeated fallback warnings
   }
 
   // Initialize Google API
@@ -29,9 +31,12 @@ class GoogleSheetsService {
       !process.env.REACT_APP_GOOGLE_API_KEY ||
       !process.env.REACT_APP_GOOGLE_CLIENT_ID
     ) {
-      console.warn(
-        '⚠️ Google API credentials not configured. Using mock mode.'
-      );
+      if (!this.hasWarnedAboutCredentials) {
+        console.warn(
+          '⚠️ Google API credentials not configured. Using mock mode.'
+        );
+        this.hasWarnedAboutCredentials = true;
+      }
       return Promise.resolve();
     }
 
@@ -134,7 +139,11 @@ class GoogleSheetsService {
 
       // Check if we have Google API available
       if (!this.gapi || !this.gapi.client) {
-        console.warn('⚠️ Google API not available, using fallback mode');
+        // Only log once to avoid spam
+        if (!this.hasWarnedAboutFallback) {
+          console.log('🔧 Google API not available - using fallback mode');
+          this.hasWarnedAboutFallback = true;
+        }
         return this.connectFallback(spreadsheetId);
       }
 
