@@ -6,63 +6,63 @@
 
 ## ✅ Checklist Setup
 
-### 1. Google Cloud Setup *(Status: ✅ COMPLETED)*
+### 1. Google Cloud Setup _(Status: ✅ COMPLETED)_
 
-- [x] Tạo Google Cloud Project *(mia-logistics-469406)*
-- [x] Enable Google Sheets API *(✅ Active)*
-- [x] Enable Google Drive API *(✅ Active)*
-- [x] Enable Google Apps Script API *(✅ Active)*
-- [x] Tạo Service Account *(mia-logistics-service)*
-- [x] Download Service Account JSON key *(✅ Configured)*
+- [x] Tạo Google Cloud Project _(mia-logistics-469406)_
+- [x] Enable Google Sheets API _(✅ Active)_
+- [x] Enable Google Drive API _(✅ Active)_
+- [x] Enable Google Apps Script API _(✅ Active)_
+- [x] Tạo Service Account _(mia-logistics-service)_
+- [x] Download Service Account JSON key _(✅ Configured)_
 - [x] Service Account email: `mia-logistics-service@mia-logistics-469406.iam.gserviceaccount.com`
 
-### 2. Google Sheets Setup *(Status: ✅ CONNECTED)*
+### 2. Google Sheets Setup _(Status: ✅ CONNECTED)_
 
-- [x] Tạo Google Sheet mới *(mia-logistics-final)*
+- [x] Tạo Google Sheet mới _(mia-logistics-final)_
 - [x] Sheet ID: `18B1PIhCDmBWyHZytvOcfj_1QbYBwczLf1x1Qbu0E5As`
-- [x] Chia sẻ Sheet với Service Account email (quyền Editor) *(22 sheets connected)*
+- [x] Chia sẻ Sheet với Service Account email (quyền Editor) _(22 sheets connected)_
 
-### 3. Google Drive Setup *(Status: ✅ CONNECTED)*
+### 3. Google Drive Setup _(Status: ✅ CONNECTED)_
 
-- [x] Tạo thư mục trên Google Drive *(✅ Access granted)*
-- [x] Service Account có quyền truy cập Drive *(✅ Verified)*
-- [x] Drive API connection successful *(✅ Working)*
+- [x] Tạo thư mục trên Google Drive _(✅ Access granted)_
+- [x] Service Account có quyền truy cập Drive _(✅ Verified)_
+- [x] Drive API connection successful _(✅ Working)_
 
-### 4. Email Service Setup *(Status: ✅ ACTIVE)*
+### 4. Email Service Setup _(Status: ✅ ACTIVE)_
 
-- [x] SendGrid API Key configured *(✅ Valid)*
-- [x] From Email: `kho.1@mia.vn` *(✅ Verified)*
-- [x] Test email sent successfully *(✅ Delivered)*
-- [x] Email service ready for production *(✅ Ready)*
+- [x] SendGrid API Key configured _(✅ Valid)_
+- [x] From Email: `kho.1@mia.vn` _(✅ Verified)_
+- [x] Test email sent successfully _(✅ Delivered)_
+- [x] Email service ready for production _(✅ Ready)_
 
-### 5. Telegram Integration *(Status: ✅ ACTIVE)*
+### 5. Telegram Integration _(Status: ✅ ACTIVE)_
 
-- [x] Bot Token configured *(8434038911:...)*
-- [x] Bot Name: `mia-logistics-manager` *(✅ Active)*
-- [x] Chat ID: `-4818209867` *(MIA.vn-Logistics group)*
-- [x] Bot connection tested *(✅ Working)*
+- [x] Bot Token configured _(8434038911:...)_
+- [x] Bot Name: `mia-logistics-manager` _(✅ Active)_
+- [x] Chat ID: `-4818209867` _(MIA.vn-Logistics group)_
+- [x] Bot connection tested _(✅ Working)_
 
-### 6. Cài đặt Project *(Status: ✅ COMPLETED)*
+### 6. Cài đặt Project _(Status: ✅ COMPLETED)_
 
-- [x] Environment variables configured in `.env` *(✅ All set)*
-- [x] Dependencies installed: `npm install` *(✅ Complete)*
-- [x] Application running on port 3004 *(✅ Active)*
+- [x] Environment variables configured in `.env` _(✅ All set)_
+- [x] Dependencies installed: `npm install` _(✅ Complete)_
+- [x] Application running on port 3004 _(✅ Active)_
 
-### 7. Authentication System *(Status: ✅ READY)*
+### 7. Authentication System _(Status: ✅ READY)_
 
-- [x] Professional login page implemented *(✅ Ready)*
-- [x] Dark/Light mode support *(✅ Working)*
-- [x] Demo accounts configured *(admin/admin123, user/user123, demo/demo123)*
-- [x] Security features active *(Rate limiting, audit logging)*
+- [x] Professional login page implemented _(✅ Ready)_
+- [x] Dark/Light mode support _(✅ Working)_
+- [x] Demo accounts configured _(admin/admin123, user/user123, demo/demo123)_
+- [x] Security features active _(Rate limiting, audit logging)_
 
-### 8. Test & Verification *(Status: ✅ ALL PASSED)*
+### 8. Test & Verification _(Status: ✅ ALL PASSED)_
 
-- [x] Google APIs test: `npm run test:google` *(✅ PASS)*
-- [x] Email service test: `npm run test:email` *(✅ PASS - 3/3 tests)*
-- [x] Telegram test: `npm run test:telegram` *(✅ PASS - 5/6 tests)*
-- [x] Health check: `npm run health-check` *(✅ HEALTHY)*
-- [x] Integration test: `npm run test:integration` *(✅ ALL PASS)*
-- [x] Application running: `npm start` *(✅ Running on localhost:3004)*
+- [x] Google APIs test: `npm run test:google` _(✅ PASS)_
+- [x] Email service test: `npm run test:email` _(✅ PASS - 3/3 tests)_
+- [x] Telegram test: `npm run test:telegram` _(✅ PASS - 5/6 tests)_
+- [x] Health check: `npm run health-check` _(✅ HEALTHY)_
+- [x] Integration test: `npm run test:integration` _(✅ ALL PASS)_
+- [x] Application running: `npm start` _(✅ Running on localhost:3004)_
 
 ## 📋 Chi Tiết Từng Bước
 
@@ -155,7 +155,7 @@
    SENDGRID_FROM_EMAIL=kho.1@mia.vn
    ```
 
-### Bước 7: Authentication System *(✅ READY)*
+### Bước 7: Authentication System _(✅ READY)_
 
 **Professional Login System Features:**
 
@@ -178,12 +178,12 @@
 - **Dashboard**: `http://localhost:3004/dashboard`
 - **Main App**: `http://localhost:3004`
 
-### Bước 8: Email Service Setup *(✅ ACTIVE)*
+### Bước 8: Email Service Setup _(✅ ACTIVE)_
 
 **SendGrid Configuration (Production Ready):**
 
-1. **API Key**: `SG.MiqCAFmLTnyjxncj_kHooA...` *(✅ Valid)*
-2. **From Email**: `kho.1@mia.vn` *(✅ Verified)*
+1. **API Key**: `SG.MiqCAFmLTnyjxncj_kHooA...` _(✅ Valid)_
+2. **From Email**: `kho.1@mia.vn` _(✅ Verified)_
 3. **From Name**: `MIA Logistics Manager`
 4. **Service Status**: ✅ **ACTIVE** - Test email delivered successfully
 
@@ -194,11 +194,11 @@
 - ✅ Error handling and retry logic
 - ✅ Delivery confirmation tracking
 
-### Bước 9: Telegram Bot Integration *(✅ ACTIVE)*
+### Bước 9: Telegram Bot Integration _(✅ ACTIVE)_
 
 **Bot Configuration:**
 
-- **Bot Name**: `mia-logistics-manager` *(✅ Active)*
+- **Bot Name**: `mia-logistics-manager` _(✅ Active)_
 - **Username**: `@mia_logistics_manager_bot`
 - **Chat Group**: `MIA.vn-Logistics` (ID: -4818209867)
 - **Status**: ✅ **Connected and Responsive**
@@ -211,7 +211,7 @@
 - ✅ Command processing
 - ✅ System notifications
 
-### Bước 10: Cài đặt và Test *(✅ ALL COMPLETED)*
+### Bước 10: Cài đặt và Test _(✅ ALL COMPLETED)_
 
 **1. Dependencies Installation:**
 
@@ -266,18 +266,18 @@ npm start
 
 **5. Test Results Summary:**
 
-| Service | Status | Tests | Details |
-|---------|--------|-------|---------|
-| 📊 Google Sheets | ✅ PASS | All tests | 22 sheets connected |
-| 📁 Google Drive | ✅ PASS | All tests | Service account authenticated |
-| 📧 Email Service | ✅ PASS | 3/3 tests | SendGrid API working |
-| 🤖 Telegram Bot | ✅ PASS | 5/6 tests | Bot active, 1 webhook warning |
-| 🔐 Authentication | ✅ PASS | All features | Professional login ready |
-| 📱 Frontend | ✅ PASS | Compiled | React app running successfully |
+| Service           | Status  | Tests        | Details                        |
+| ----------------- | ------- | ------------ | ------------------------------ |
+| 📊 Google Sheets  | ✅ PASS | All tests    | 22 sheets connected            |
+| 📁 Google Drive   | ✅ PASS | All tests    | Service account authenticated  |
+| 📧 Email Service  | ✅ PASS | 3/3 tests    | SendGrid API working           |
+| 🤖 Telegram Bot   | ✅ PASS | 5/6 tests    | Bot active, 1 webhook warning  |
+| 🔐 Authentication | ✅ PASS | All features | Professional login ready       |
+| 📱 Frontend       | ✅ PASS | Compiled     | React app running successfully |
 
-## 🧪 Testing Features *(All Features ✅ WORKING)*
+## 🧪 Testing Features _(All Features ✅ WORKING)_
 
-### 🔐 Authentication System *(✅ ACTIVE)*
+### 🔐 Authentication System _(✅ ACTIVE)_
 
 - **Professional Login UI**: Modern design with dark/light mode toggle
 - **Demo Accounts**: admin/admin123, user/user123, demo/demo123
@@ -285,7 +285,7 @@ npm start
 - **Responsive Design**: Works on all devices
 - **Connection Status**: Real-time Google Sheets connection indicator
 
-### 📊 Google Sheets Integration *(✅ CONNECTED - 22 Sheets)*
+### 📊 Google Sheets Integration _(✅ CONNECTED - 22 Sheets)_
 
 - **Get Sheet Metadata**: ✅ Working - Sheet info retrieval
 - **Read Sheet Data**: ✅ Working - Data reading from 22 connected sheets
@@ -294,7 +294,7 @@ npm start
 - **Export to CSV**: ✅ Working - Data export features
 - **Real-time Sync**: ✅ Working - Live data synchronization
 
-### 📁 Google Drive Integration *(✅ CONNECTED)*
+### 📁 Google Drive Integration _(✅ CONNECTED)_
 
 - **List Files**: ✅ Working - File listing in Drive folders
 - **Create Test Folder**: ✅ Working - Folder creation
@@ -303,7 +303,7 @@ npm start
 - **Download File**: ✅ Working - File download functionality
 - **Permission Management**: ✅ Working - Access control
 
-### 📧 Email Service Integration *(✅ ACTIVE - SendGrid)*
+### 📧 Email Service Integration _(✅ ACTIVE - SendGrid)_
 
 - **Email Templates**: ✅ Working - HTML formatted emails with MIA branding
 - **Notification System**: ✅ Working - Automated system notifications
@@ -311,7 +311,7 @@ npm start
 - **Error Handling**: ✅ Working - Comprehensive error management
 - **Delivery Tracking**: ✅ Working - Email delivery confirmation
 
-### 🤖 Telegram Bot Integration *(✅ ACTIVE)*
+### 🤖 Telegram Bot Integration _(✅ ACTIVE)_
 
 - **✅ Bot Info**: Connected - @mia_logistics_manager_bot
 - **✅ Connection Test**: PASSED - Bot responsive with test buttons
@@ -320,7 +320,7 @@ npm start
 - **✅ Chat Management**: WORKING - Group chat management
 - **⚠️ Webhook Settings**: Not configured (optional for current setup)
 
-### 🎯 Automation System *(✅ READY)*
+### 🎯 Automation System _(✅ READY)_
 
 - **Schedule Tasks**: ✅ Ready - Task scheduling system
 - **Email Notifications**: ✅ Active - SendGrid integration
@@ -328,7 +328,7 @@ npm start
 - **Report Generation**: ✅ Working - Automated report creation
 - **Health Monitoring**: ✅ Active - System health tracking
 
-### 🤖 AI Analytics Dashboard *(🚀 AVAILABLE)*
+### 🤖 AI Analytics Dashboard _(🚀 AVAILABLE)_
 
 - **Smart Insights**: 🚀 Ready - Data analysis capabilities
 - **Predictions**: 🚀 Ready - Trend prediction features

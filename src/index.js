@@ -24,6 +24,8 @@ import { ThemeContextProvider } from './contexts/ThemeContext';
 // Import main App component
 import App from './App';
 
+// Import styles
+
 // Import utilities
 import EnhancedErrorBoundary from './components/common/EnhancedErrorBoundary';
 import { logger } from './utils/logger';

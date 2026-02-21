@@ -1,5 +1,5 @@
 import { Box, CircularProgress, Typography } from '@mui/material';
-import React, { Suspense, useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
@@ -11,6 +11,9 @@ import { useTheme } from './contexts/ThemeContext';
 // Import layout components
 import AuthLayout from './components/common/AuthLayout';
 import MainLayout from './components/common/MainLayout';
+
+// Import global styles
+import './App.css';
 
 // Import lazy-loaded pages
 import { lazyWithRetry } from './utils/lazyWithRetry';
