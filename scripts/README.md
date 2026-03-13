@@ -3,7 +3,9 @@
 ## 📁 Cấu Trúc Thư Mục
 
 ### core/
+
 Core utilities và services chính:
+
 - `standardize-env-vars.js` - Chuẩn hóa biến môi trường
 - `health-check.js` - Kiểm tra sức khỏe hệ thống
 - `email-notifier.js` - Gửi email thông báo
@@ -12,7 +14,9 @@ Core utilities và services chính:
 - `securityHardening.js` - Bảo mật hệ thống
 
 ### tests/
+
 Test scripts cho các services:
+
 - `test-services.js` - Test tất cả services
 - `testApiService.js` - Test API service
 - `testAuthentication.js` - Test authentication
@@ -21,12 +25,16 @@ Test scripts cho các services:
 - `testTelegramConnection.js` - Test Telegram connection
 
 ### deploy/
+
 Deployment scripts:
+
 - `deploy.js` - Deploy chính
 - `deployProduction.js` - Deploy production
 
 ### setup/
+
 Setup và configuration scripts:
+
 - `setup.js` - Setup chính
 - `setupGoogleAPI.js` - Setup Google API
 - `setupMonitoring.js` - Setup monitoring
@@ -34,14 +42,18 @@ Setup và configuration scripts:
 - `setupGCP.js` - Setup Google Cloud Platform
 
 ### checks/
+
 Validation và check scripts:
+
 - `check-system-status.js` - Check trạng thái hệ thống
 - `checkAllConfigs.js` - Check tất cả configs
 - `checkGoogleSetup.js` - Check Google setup
 - `connection-checker.js` - Check connections
 
 ### shell/
+
 Shell scripts:
+
 - Các file .sh được gộp vào đây
 
 ## 🚀 Sử Dụng
